@@ -1,0 +1,369 @@
+.popup {
+  top: 10%;
+  
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+}
+.popup.active {
+  display: block;
+}
+
+.popup__container {
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 35%;
+  left: 35%;
+  background-color: #ffffff;
+  width: 430px;
+  border: 1px;
+  border-radius: 10px;
+  box-shadow: 0 0 25px 0 #00000026;
+  z-index: 3;
+}
+.popup__close {
+  cursor: pointer;
+  position: relative;
+  width: 35px;
+  background: none;
+  border-style: none;
+  position: absolute;
+  color: black;
+  top: -40px;
+  
+  
+}
+.pop-up__close-button {
+  cursor: pointer;
+  align-self: flex-end;
+  width: 3px;
+  background: none;
+  border: none;
+  margin-left: 90%;
+  margin-bottom: 80%;
+  color: black;
+  position: absolute;
+  
+  
+}
+
+.pop-up__close-button:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}
+.popup__card {
+  background-color: rgb(255, 255, 255);
+  width: 360px;
+  border-radius: 10px;
+  border-style: hidden;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+.popup__title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 5% 10%;
+  color: #000;
+}
+.pop-up__container {
+  background-color: rgb(255, 255, 255);
+  width: 40px;
+  height: 180px;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin-right: 6%;
+}
+.pop-up__title {
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: #000000;
+  margin: 2% 5%;
+}
+
+.pop-up__delete-title {
+  margin-bottom: 22px;
+}
+.pop-up__input-container {
+  margin: 3px auto 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: none;
+}
+.pop-up__form-item {
+  width: 358px;
+  height: 27.26px;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 1px solid #c4c4c4;
+}
+.pop-up__form-item_error {
+  border-bottom: 1px solid red;
+}
+
+.pop-up__form-error {
+  color: red;
+  font-size: 12px;
+  font-weight: 400;
+  width: 358px;
+  margin-bottom: 5px;
+}
+
+.pop-up__form-item::placeholder {
+  color: #c4c4c4;
+}
+.pop-up__save-button {
+  display: block;
+  width: 358px;
+  height: 50.15px;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: auto;
+  margin-bottom: 36px;
+  border-radius: 2px;
+}
+
+.pop-up__save-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+.pop-up__save-button:disabled {
+  background: white;
+  color: rgba(204, 204, 204, 1);
+  border-radius: 2px;
+}
+.popup__input {
+  margin: 2% 10%;
+  width: 80%;
+  font-size: 14px;
+  font-weight: normal;
+  color: #000;
+  
+  border-width: 0px 0px 0px;
+  padding: 2% 0px;
+}
+
+.popup__input-avatar{
+  width: 200%;
+  font-weight: normal;
+  color: #000;
+}
+
+.popup__input-avatar:invalid{
+  border-bottom: 1px solid red;
+}
+.popup__input-avatar:valid{
+  border-bottom: 1px solid green;
+}
+
+.popup__input:invalid {
+  border-bottom: 1px solid red;
+}
+.popup__input:valid {
+  border-bottom: 1px solid green;
+}
+
+.popup__submit-btn {
+  margin: 10% 10%;
+  width: 80%;
+  font-size: 14px;
+  font-weight: normal;
+  color: #c4c4c4;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #c4c4c4;
+  background-color: black;
+  padding: 5% 0px;
+}
+.popup__submit-btn:invalid {
+  background-color: white;
+}
+.popup__submit-btn:valid {
+  background-color: black;
+}
+.popup__submit-btn:hover {
+  color: #ffffff;
+  border-style: none;
+  background-color: #00000083;
+}
+.popup__submit-btn.active {
+  color: #fff;
+  border-style: none;
+  background-color: #000;
+}
+
+.popup__overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup__image {
+  position: relative;
+  
+  top: 0;
+  width: 10px;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 100;
+}
+.popup__image.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup__image-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+}
+.popup__large-image {
+  max-width: 70vw;
+  max-height: 70vh;
+  width: auto;
+  display: block;
+}
+
+.popup-image__close {
+  cursor: pointer; 
+   
+  align-self: flex-end; 
+  border: none;  
+  color: black; 
+  position: absolute;  
+  right: -9%;
+  top: -5%;
+  background: none;
+  
+  
+   
+  
+ }
+
+.popup__input_type_error {
+  border-bottom: 1px solid rgba(rgb(193, 44, 44));
+}
+
+.button_inactive {
+  background-color: white;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 20px;
+  gap: 30px;
+  
+  
+}
+
+#container_input {
+  background-color: #000;
+  border: none;
+  border-bottom: 2px solid #fff;
+  margin: 2%; 
+  width: 70%;
+  font-size: 14px;
+  font-weight: normal;
+  color: white;
+  width: 358px;
+  height: 29px;
+  
+  padding: 2% 0px;
+  
+}
+
+#container_button {
+  cursor: pointer;
+  margin-top: 358px;
+  width: 358px;
+  height: 50px;
+  border-radius: 2px;
+  
+
+}
+
+.modal {
+  top: 250px;
+  left: 43%;
+  
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.modal-content {
+  max-width: 430px;
+  max-height: 330px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  color: #000;
+  
+  
+}
+
+.modal-content img {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+  margin-top: 40px;
+}
+
+.modal-content p {
+  margin: 10px 0;
+  font-size: 24px;
+  
+}
+
+.close-button {
+  position: absolute;
+  top: -100px;
+  right: -50px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.close-button img {
+  width: 40px;
+  height: 40px;
+}

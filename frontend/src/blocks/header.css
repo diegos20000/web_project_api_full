@@ -1,0 +1,43 @@
+.header {
+  margin-top: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #000;
+}
+.header__title {
+  width: 180px;
+  margin: 0;
+}
+
+.header__hr {
+  width: 100%;
+  border: 1px solid #545454; 
+  margin: 10px;
+  opacity: 70%;
+}
+
+.header__button-container {
+  margin-left: 60%;
+}
+
+.header__button {
+  color: white;   
+  border: none;   
+  cursor: pointer;  
+  font-size: 16px;
+  padding: 0px;
+  text-decoration: none;
+  background-color: #000;
+}
+
+.header__button:hover {
+  opacity: 0.7;
+}
+
+@media screen and (max-width: 320px) {
+  .header__title {
+    width: 124px;
+  }
+}

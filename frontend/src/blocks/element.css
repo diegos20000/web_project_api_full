@@ -1,0 +1,111 @@
+.elements {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px 18px;
+  margin: 0px auto;
+}
+.card {
+  box-sizing: border-box;
+  background-color: white;
+  border-color: black;
+  border-radius: 10px;
+  margin: 0;
+  display: inline-block;
+  position: relative;
+}
+
+.element__img {
+  object-fit: cover;
+  width: 282px;
+  height: 282px;
+  border-radius: 2%;
+  background-color: #000;
+}
+
+.element_text-like {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px;
+}
+.element__text {
+  margin: auto 3%;
+  max-width: 200px;
+  color: black;
+
+  padding: 1px;
+}
+.element__name {
+  font-size: 20px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: black;
+  margin: 0;
+  max-width: 215px;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+}
+.element__button-like {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #00000000;
+  border-style: none;
+  box-sizing: border-box;
+  padding-right: 30px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: flex-end;
+  background-image: url(../images/like.jpg);
+}
+.element__button-like_active {
+  background-image: url(../images/darklike.jpg);
+}
+
+.element__button-like:hover {
+  opacity: 50%;
+  cursor: pointer;
+}
+
+.element__button-trash {
+  width: 280px;
+  display: flex;
+  position: absolute;
+  justify-content: flex-end;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+.element__button-trash-img {
+  width: 18px;
+  height: 19px;
+}
+.element__button-trash-img:hover {
+  opacity: 60%;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .elements {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .element__img {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .elements {
+    width: 90%;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: max-content;
+  }
+}

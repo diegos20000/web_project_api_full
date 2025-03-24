@@ -1,0 +1,27 @@
+{
+  "name": "web_project_api_full",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "nodemon app.js",
+    "lint": "npx eslint ."
+  },
+  "author": "Diego Rodrigo Cano",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.2",
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "react": "^19.0.0",
+    "validator": "^13.12.0"
+  }
+}
