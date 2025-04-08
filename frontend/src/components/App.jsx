@@ -16,7 +16,7 @@ import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
-import { signup, signin } from '../utils/auth.js';
+import {signup, signin } from '../utils/auth.js';
 
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";

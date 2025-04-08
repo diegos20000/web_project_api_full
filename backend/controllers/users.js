@@ -1,17 +1,19 @@
-const { User } = require("../models/user");
+const  User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const express = require('express');   
+const router = express.Router();
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     res.status(200).send(users);
   } catch (error) {
-    res.status(500).send({ message: "Error al obtener usuarios", error });
+    next(error);
   }
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
     
@@ -26,14 +28,17 @@ const getUserById = async (req, res) => {
   }
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({ 
       name: name || undefined,
       about: about || undefined, 
       avatar: avatar || undefined,
-      email, password 
+      email,
+      password: hashedPassword,
     });
 
     await newUser.save();
@@ -42,12 +47,11 @@ const createUser = async (req, res) => {
     if (error.code === 11000) { 
       return res.status(400).send({ message: "Email ya en uso" });  
     }
-    console.log(error);
-    res.status(400).send({ message: "Error al crear el usuario", error });
+    next(error);
   }
 };
 
-const login = async (req,res) => {
+const login = async (req, res, next) => {
   const {email, password} = req.body;
 
   try {
@@ -61,14 +65,17 @@ const login = async (req,res) => {
       return res.status(401).send({message: "Correo electrónico o contraseña incorrectos" });
     }
 
+    if (!process.env.JWT_SECRET) {  
+      throw new Error("Clave secreta JWT no definida");   
+   }
+
     const token = jwt.sign({ _id: user._id}, process.env.JWT_SECRET, {
       expiresIn: "7d"
     });
 
     res.status(200).send({ token }); 
    } catch (error) {   
-     console.error(error);  
-       res.status(500).send({ message: "Error al autenticar al usuario", error }); 
+    next(error);
      }};
 
 
