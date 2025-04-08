@@ -1,7 +1,5 @@
-const fs = require("fs");
-const path = require("path");
-const router = express.Router();
 const express = require("express");
+const router = express.Router();
 const auth = require("../middleware/auth");
 const { getUsers, getUserById, createUser, getCurrentUser } = require("../controllers/users");
 
