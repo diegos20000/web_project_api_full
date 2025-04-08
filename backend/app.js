@@ -8,6 +8,7 @@ const {login, createUser, getCurrentUser} = require("./controllers/users");
 const { requestLogger, errorLogger } = require('./middleware/Logger');
 const auth = require("./middleware/auth");
 const { errors } = require('celebrate');
+const errorHandler = require('./middleware/errorHandler');
 
 // Crear aplicación Express
 const app = express();
@@ -49,15 +50,14 @@ app.all("*", (req, res, next) => {
 });
 
 // Middleware de manejo de errores global
-app.use((err, req, res, next) => { 
-  res.status(err.statusCode || 500).send({ message: 'Se ha producido un error en el servidor' });
-});
+app.use(errorHandler);
 
 // Configuración de puerto y escucha
 const { PORT = 3000 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, () => {console.log(`App escuchando en el puerto ${PORT}`); 
+  app.listen(PORT, () => {
+    console.log(`App escuchando en el puerto ${PORT}`); 
  });
 }
 
