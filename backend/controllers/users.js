@@ -1,5 +1,6 @@
 const  User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require("bcrypt");
 const express = require('express');   
 const router = express.Router();
