@@ -21,7 +21,7 @@ import {signup, signin } from '../utils/auth.js';
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
 
-const BASE_URL = "https://se-register-api.en.tripleten-services.com/v1";
+const BASE_URL = "https://api.xyzzz.chickenkiller.com";
 
 
 function App() {
@@ -217,7 +217,7 @@ function App() {
 
   const getUserInfo = async (token) => {
     try {
-      const response = await fetch('https://se-register-api.en.tripleten-services.com/v1/users/me', {
+      const response = await fetch(`${BASE_URL}/users/me`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,

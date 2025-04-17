@@ -129,7 +129,7 @@ class Api {
 
 const api = () =>
     new Api({
-        baseUrl: "http://localhost:3000",
+        baseUrl: "http://api.xyzzz.chickenkiller.com",
         headers: {
             authorization: "c7a246af-e2b0-4a14-bf89-44beb7938eee",
             "content-Type": "application/json",

@@ -117,7 +117,7 @@ export const signin = async (email, password) => {
 };
 
 const auth = new Auth({
-  BASE_URL: "http://localhost:3000",
+  BASE_URL: "http://api.xyzzz.chickenkiller.com",
 });
 
 export default auth;
