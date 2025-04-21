@@ -1,8 +1,8 @@
 import token from "./token";
 
 class Api {
-    constructor({baseUrl, headers}) {
-        this.baseUrl = baseUrl;
+    constructor({BASE_URL, headers}) {
+        this.BASE_URL = BASE_URL;
         this.headers = headers;
     }
 
@@ -129,7 +129,7 @@ class Api {
 
 const api = () =>
     new Api({
-        baseUrl: "http://api.xyzzz.chickenkiller.com",
+        BASE_URL: "http://api.xyzzz.chickenkiller.com",
         headers: {
             authorization: "c7a246af-e2b0-4a14-bf89-44beb7938eee",
             "content-Type": "application/json",

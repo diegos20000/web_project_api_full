@@ -1,8 +1,8 @@
 import {setToken, getToken, removeToken} from "./token";
 
 class Auth {
-  constructor({ baseUrl}) {
-    this.baseUrl = baseUrl;
+  constructor({ BASE_URL}) {
+    this.BASE_URL = BASE_URL;
   }
 
   _request(endpoint, method = "GET", body = null) {
@@ -115,9 +115,9 @@ export const signin = async (email, password) => {
         return { success: false, message: "Error en la conexión" };
      }
 };
-
+console.log(import.meta.env.VITE_BASE_URL);
 const auth = new Auth({
-  baseUrl: "http://api.xyzzz.chickenkiller.com",
+  baseUrl: import.meta.env.VITE_BASE_URL,
 });
 
 export default auth;
