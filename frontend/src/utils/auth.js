@@ -1,8 +1,8 @@
 import {setToken, getToken, removeToken} from "./token";
 
 class Auth {
-  constructor({ BASE_URL}) {
-    this.BASE_URL = BASE_URL;
+  constructor({ baseUrl}) {
+    this.baseUrl = baseUrl;
   }
 
   _request(endpoint, method = "GET", body = null) {
@@ -117,7 +117,7 @@ export const signin = async (email, password) => {
 };
 
 const auth = new Auth({
-  BASE_URL: "http://api.xyzzz.chickenkiller.com",
+  baseUrl: "http://api.xyzzz.chickenkiller.com",
 });
 
 export default auth;
