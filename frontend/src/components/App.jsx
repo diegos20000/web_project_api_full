@@ -16,7 +16,8 @@ import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
-import {signup, signin } from '../utils/auth.js';
+
+import auth from '../utils/auth.js';
 
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
@@ -239,7 +240,7 @@ function App() {
   
 
   const handleSignup = async (email, password) => {
-    const result = await signup(email, password);
+    const result = await auth.register(email, password);
     if(result.success) {
       const registeredEmails = JSON.parse
       (localStorage.getItem("registeredEmails")) || [];
@@ -267,7 +268,7 @@ function App() {
       return;
     }
 
-    const result = await signin(email, password);
+    const result = await auth.login(email, password);
     if(result.success) {
       localStorage.setItem("token", result.token);
       const userInfo = await getUserInfo(result.token);
