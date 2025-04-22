@@ -6,19 +6,19 @@ class Api {
         this.headers = headers;
     }
 
-    getUserInfo() {
-        return fetch(`${this.baseUrl}/users/me`, {
-            header: this.headers,
-        })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`);
-        })
-        .catch ((error) => {
-            console.log(error);
-        });
+    async getUserInfo() {
+        try {  
+           const res = await fetch(`${this.BASE_URL}/users/me`, { 
+              headers: this.headers,          
+        });      
+        if (!res.ok) {   
+              throw new Error(`Error: ${res.status}`);     
+         }    
+         return await res.json();    
+     } catch (error) {    
+         console.log(error);  
+         throw error;     
+       }
     }
 
     getInitialCards() {
@@ -131,10 +131,10 @@ const api = () =>
     new Api({
         BASE_URL: "http://api.xyzzz.chickenkiller.com",
         headers: {
-            authorization: "c7a246af-e2b0-4a14-bf89-44beb7938eee",
+            authorization: token.getToken(),
             "content-Type": "application/json",
 
-            authorization: token.getToken(),
+            
         },
     });
 

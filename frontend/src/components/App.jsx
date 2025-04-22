@@ -65,53 +65,60 @@ function App() {
     },
   ]);
 
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  useEffect(() => {  
-    if (token) {     
-       localStorage.setItem("token", token);  
-    } else {   
-       localStorage.removeItem("token");  
-        } 
-   }, [token]);
-
+  const updateToken = (newToken) => {  
+    localStorage.setItem("token", newToken); 
+    setToken(newToken);
+  };
+    
+  const removeToken = () => { 
+    localStorage.removeItem("token"); 
+     setToken("");
+  };
+  
+  
   useEffect(() => {
+    const fetchUserInfo = async () => {  
+       if (token) {  
+         try {      
+           const userInfo = await getUserInfo(token); 
+           setCurrentUser(userInfo);  
+           setIsLoggedIn(true);    
+         } catch (error) {   
+           console.error("Error fetching user info:", error);  
+           removeToken();      
+        }     
+      }    
+     };   
+       fetchUserInfo(); 
+    }, [token]);
 
-    if (token) {
-      getUserInfo(token)
-      .then(({username, email}) => {
-        setIsLoggedIn(true);
-        setCurrentUser({username, email});
-      })
-      .catch(() => {
-        localStorage.removeItem("token");
-        setToken("");
-      });
-    }
-
-    const handleEscKey = (evt) => {
-      if (evt.key === "Escape") {
-        closeAllPopups();
-      }
-    };
-    document.addEventListener("keydown", handleEscKey);
-    return () => {
-      document.removeEventListener("keydown", handleEscKey);
-    };
-  }, [token]);
+  useEffect(() => { 
+    const handleEscKey = (evt) => { 
+      if (evt.key === "Escape") {  
+        closeAllPopups();   
+     }    
+  };    
+    document.addEventListener("keydown", handleEscKey); 
+    return () => {  
+    document.removeEventListener("keydown", handleEscKey);  
+    };  
+  }, []);
+ 
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
-  }
+  };
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
-  }
+  };
 
   function handleDeletePopupClick(card) {
     setCardToDelete(card);
     setIsDeletePopupOpen(true);
-  }
+  };
 
   function handleCardLike(card) {
     const likes = card.likes || [];
@@ -128,7 +135,7 @@ function App() {
       return c;
     });
     setCards(updatedCards);
-  }
+  };
   async function handleCardDelete() {
     if (!cardToDelete) {
       return;
@@ -138,10 +145,10 @@ function App() {
     );
     setCardToDelete(null);
     setIsDeletePopupOpen(false);
-  }
+  };
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
-  }
+  };
 
   function handleAddPlaceSubmit({ link, name }) {
     const newCard = {
@@ -153,11 +160,11 @@ function App() {
     };
     setCards((prevCards) => [newCard, ...prevCards]);
     closeAllPopups();
-  }
+  };
 
   function handleCardClick(card) {
     setSelectedCard(card);
-  }
+  };
 
   const handleUpdateAvatar = async (data) => {
     const token = localStorage.getItem("token");
@@ -193,7 +200,7 @@ function App() {
   function onUpdateUser(user) {
     setCurrentUser(user);
     closeAllPopups();
-  }
+  };
 
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
@@ -201,7 +208,7 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
     setIsDeletePopupOpen(false);
-  }
+  };
 
   const handleLogin = (newToken) => {
     setToken(newToken);
@@ -240,19 +247,22 @@ function App() {
   
 
   const handleSignup = async (email, password) => {
+    try {
     const result = await auth.register(email, password);
-    if(result.success) {
-      const registeredEmails = JSON.parse
-      (localStorage.getItem("registeredEmails")) || [];
+    if (result.token) {   
+       updateToken(result.token);
+       const registeredEmails = JSON.parse
+       (localStorage.getItem("registeredEmails")) || [];
+    if(!registeredEmails.includes(email)) {
       registeredEmails.push(email);
       localStorage.setItem("registeredEmails", JSON.stringify(registeredEmails));
-      console.log("Correos electrónicos registrados:", registeredEmails);
-
+    }
       setTooltipMessage("¡Correcto! Ya estás registrado.");
       setTooltipLogo(checkImage);
       setInfoTooltipOpen(true);
       setIsLoggedIn(true);
-    } else {
+      }
+    } catch (error) {
       setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
       setInfoTooltipOpen(true);
@@ -268,18 +278,25 @@ function App() {
       return;
     }
 
+  try {
     const result = await auth.login(email, password);
     if(result.success) {
-      localStorage.setItem("token", result.token);
+      updateToken(result.token);
       const userInfo = await getUserInfo(result.token);
       setCurrentUser(userInfo);
       setIsLoggedIn(true);
       navigate("/");
-    }else {
+    } else {
       setTooltipMessage( "Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
       setInfoTooltipOpen(true);
-    }
+     }
+    } catch (error) {     
+      console.error("Error en el inicio de sesión:", error);  
+      setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");   
+      setTooltipLogo(errorImage);  
+      setInfoTooltipOpen(true);   
+     }
   };
 
   const handleSignOut = () => {
@@ -299,7 +316,7 @@ function App() {
              <Route path="/signin" element={<Login onLogin={handleSignin} />} />        
              <Route path="/" element={          
                 <ProtectedRoute isAuthenticated={isLoggedIn}>          
-                  <>           
+              <>           
                         
                <Main             
                  cards={cards}         
@@ -309,8 +326,8 @@ function App() {
                  onCardClick={setSelectedCard}                
                  onCardLike={handleCardLike}                 
                  onCardDelete={(card) => {                   
-                 setCardToDelete(card);                  
-                 setIsDeletePopupOpen(true);           
+                   setCardToDelete(card);                  
+                   setIsDeletePopupOpen(true);           
                   }}              
                       />             
                                
@@ -356,12 +373,12 @@ function App() {
                     
                <Footer />   
                
-                 </div>   
+             </div>   
                  
-                </CurrentUserContext.Provider>  );
+          </CurrentUserContext.Provider>  
+        );
                 
-              }
+      }
   
   
-              export default App;
-
+     export default App;

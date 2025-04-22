@@ -5,7 +5,7 @@ class Auth {
     this.BASE_URL = BASE_URL;
   }
 
-  _request(endpoint, method = "GET", body = null) {
+  async _request(endpoint, method = "GET", body = null) {
     const token = getToken();
 
     const headers = {
@@ -25,9 +25,12 @@ class Auth {
       options.body = JSON.stringify(body);
     }
 
-    return fetch(`${this.BASE_URL}${endpoint}`, options).then((res) =>
-    (res.ok ? res.json() : Promise.reject(`Error: ${res.status}`)));
- }
+    const res = await fetch(`${this.BASE_URL}${endpoint}`, options);
+    if (!res.ok) { 
+      throw new Error(`Error: ${res.status}`);   
+    } 
+     return res.json(); 
+   }
 
   register(email, password) {
   return this._request("/signup", "POST", {email, password})
@@ -72,7 +75,7 @@ class Auth {
 
 
 
-console.log(import.meta.env.VITE_BASE_URL);
+
 const auth = new Auth({
   BASE_URL: "https://api.xyzzz.chickenkiller.com",
 });
