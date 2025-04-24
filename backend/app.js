@@ -1,8 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const cards = require("./routes/cards");
 const users = require("./routes/users");
 const mongoose = require("mongoose");
-require("dotenv").config();
 const cors = require("cors");
 const {login, createUser, getCurrentUser} = require("./controllers/users");
 const { requestLogger, errorLogger } = require('./middleware/Logger');
@@ -10,9 +10,13 @@ const auth = require("./middleware/auth");
 const { errors } = require('celebrate');
 const errorHandler = require('./middleware/errorHandler');
 const jwt = require('jsonwebtoken');
+const path = require("path");
 
 // Crear aplicación Express
 const app = express();
+
+// Configuración para servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Middlewares
 app.use(express.json());
@@ -88,7 +92,7 @@ app.all("*", (req, res, next) => {
 app.use(errorHandler);
 
 // Configuración de puerto y escucha
-const { PORT = 3000 } = process.env;
+const { PORT = 5003 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {

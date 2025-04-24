@@ -37,14 +37,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6,
-    maxlength: 30,
+    maxlength: 80,
     select: false
   },
 
   avatar: {
     type: String,
-    required: true,
-    default: "",
+    //required: true,
+    //default: "",
     validate: {
       validator: avatarValidator,
       message: (props) =>
@@ -53,11 +53,11 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre('save', function(next) {
-    if (this.isModified('password')) {
-     this.password = bcrypt.hashSync(this.password, 10);
-    }    
-    next();
-  });
+// userSchema.pre('save', function(next) {
+//     if (this.isModified('password')) {
+//      this.password = bcrypt.hashSync(this.password, 10);
+//     }    
+//     next();
+//  });
 
-module.exports = { User: mongoose.model("user", userSchema), avatarValidator };
+module.exports = mongoose.model("User", userSchema);

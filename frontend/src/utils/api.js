@@ -129,7 +129,7 @@ class Api {
 
 const api = () =>
     new Api({
-        BASE_URL: "http://api.xyzzz.chickenkiller.com",
+        BASE_URL: "http://localhost:5003",
         headers: {
             authorization: token.getToken(),
             "content-Type": "application/json",

@@ -31,7 +31,17 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
+  console.log(email, password);
+  if (!email || !password) {     
+    return res.status(400).send({ message: "Email y contraseña son requeridos." }); 
+  }
+
   try {
+    const existingUser = await User.findOne({ email });  
+    console.log(existingUser); 
+    if (existingUser) {    
+      return res.status(409).send({ message: "El correo electrónico ya está en uso." });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({ 
@@ -41,9 +51,28 @@ const createUser = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-
+    console.log(newUser);    
     await newUser.save();
-    res.status(201).send({ message: "Usuario creado exitosamente", user: newUser });
+
+    if (!JWT_SECRET) { 
+      console.log(process.env.JWT_SECRET);
+      throw new Error("Clave secreta JWT no definida");   
+    }
+
+    const token = jwt.sign({ _id: newUser._id }, JWT_SECRET, {
+       expiresIn: "7d",   
+   });
+
+    res.status(201).send({
+     message: "Usuario creado exitosamente", user: {
+      _id: newUser._id,
+      name: newUser.name,
+      about: newUser.about,
+      email: newUser.email,
+      avatar: newUser.avatar,
+     },
+     token,  
+    });
   } catch (error) {
     if (error.code === 11000) { 
       return res.status(400).send({ message: "Email ya en uso" });  
@@ -66,11 +95,11 @@ const login = async (req, res, next) => {
       return res.status(401).send({message: "Correo electrónico o contraseña incorrectos" });
     }
 
-    if (!process.env.JWT_SECRET) {  
+    if (!JWT_SECRET) {  
       throw new Error("Clave secreta JWT no definida");   
    }
 
-    const token = jwt.sign({ _id: user._id}, process.env.JWT_SECRET, {
+    const token = jwt.sign({ _id: user._id}, JWT_SECRET, {
       expiresIn: "7d"
     });
 

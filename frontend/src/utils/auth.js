@@ -27,44 +27,45 @@ class Auth {
 
     const res = await fetch(`${this.BASE_URL}${endpoint}`, options);
     if (!res.ok) { 
-      throw new Error(`Error: ${res.status}`);   
+      const errorData = await res.json();
+      throw new Error(`Error ${res.status}: ${errorData.message || res.statusText}`);   
     } 
      return res.json(); 
    }
 
-  register(email, password) {
-  return this._request("/signup", "POST", {email, password})
-    .then((data) => {
+  async register(email, password) {
+    try {
+      const data = await this._request("/signup", "POST", { email, password });
+      console.log(data);
       if (data.token) {
         setToken(data.token);
       }
       return data;
-  })
-  .catch((error) => {
+
+  } catch (error)  {
     console.log("Error en la registracion", error);
     throw error;
-  });
+  }
 }
 
-  login(email, password) {
-    return this._request("/signin", "POST", {email, password})
-    .then((data) => {
-       if (data.token) {
+  async login(email, password) {
+    try {
+      const data = await this._request("/signin", "POST", { email, password });
+      if (data.token) {
         setToken(data.token);
-       }
-      return data;
-   })
-  .catch((error) => {
+      }
+    return data;
+   } catch (error) {
     console.log("Error en el acceso", error); 
     throw error;
-  });
+  }
 }
 
   logout() {
     removeToken();
   }
 
-  getUserInfo() {
+  async getUserInfo() {
     return this._request("/users/me")
       .catch((error) => {
         console.log("Error al obtener información del usuario", error);
@@ -77,7 +78,7 @@ class Auth {
 
 
 const auth = new Auth({
-  BASE_URL: "https://api.xyzzz.chickenkiller.com",
+  BASE_URL: "http://localhost:5003",
 });
 
 export default auth;

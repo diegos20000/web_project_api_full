@@ -9,6 +9,7 @@ const Login = ({onLogin}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSubmit = (e) => {
+        
         e.preventDefault();
         onLogin(email, password);
         setIsModalOpen(true);
@@ -22,17 +23,19 @@ const Login = ({onLogin}) => {
 
     return (  
     <div id="container">
-        
-      
-    <form onSubmit={handleSubmit} id="container">     
-     <h2>Iniciar Sesión</h2>   
-     <input id="container_input"       
+          
+    <form onSubmit={handleSubmit} id="container">    
+     <h2>Iniciar Sesión</h2>  
+
+     <input 
+        id="container_input"       
         type="email"    
         placeholder="Correo electronico"    
         onChange={(e) => setEmail(e.target.value)}    
         required     
          />     
-     <input id="container_input"       
+     <input 
+        id="container_input"       
         type="password"    
         placeholder="Contraseña"     
         value={password}     
@@ -41,10 +44,13 @@ const Login = ({onLogin}) => {
            />     
          <button id="container_button" type="submit">Inicia sesión</button>
          <p>      
-            ¿Aún no eres miembro? <span onClick={() => 
+            ¿Aún no eres miembro?{" "} 
+            <span 
+            onClick={() => 
             navigate("/signup")} style={{ cursor: 'pointer', color: 'blue'
              }}
-             >Regístrate aquí</span>     
+             >Regístrate aquí
+             </span>     
               </p>
              
           </form>

@@ -22,7 +22,7 @@ import auth from '../utils/auth.js';
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
 
-const BASE_URL = "https://api.xyzzz.chickenkiller.com";
+const BASE_URL = "http://localhost:5003";
 
 
 function App() {
@@ -82,9 +82,18 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
     const fetchUserInfo = async () => {  
        if (token) {  
          try {      
-           const userInfo = await getUserInfo(token); 
-           setCurrentUser(userInfo);  
-           setIsLoggedIn(true);    
+           const userInfo = await getUserInfo(token);
+           const initialCards = await fetch(`${BASE_URL}/cards`, {  
+               method: "GET",     
+               headers: {           
+                   'Authorization': `Bearer ${token}`,     
+              },    
+            }).then(res => res.json());
+           
+           setCurrentUser(userInfo); 
+           setCards(initialCards); 
+           setIsLoggedIn(true);
+           navigate("/");    
          } catch (error) {   
            console.error("Error fetching user info:", error);  
            removeToken();      
@@ -92,7 +101,7 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
       }    
      };   
        fetchUserInfo(); 
-    }, [token]);
+    }, [token, navigate]);
 
   useEffect(() => { 
     const handleEscKey = (evt) => { 
@@ -229,12 +238,13 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
       if(response.ok) {
         const {data} = await response.json();
-        return data;
+        return data.data;
       } else {
         throw new Error("No se pudo obtener la información del usuario");
       }
@@ -249,10 +259,12 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
   const handleSignup = async (email, password) => {
     try {
     const result = await auth.register(email, password);
-    if (result.token) {   
+
+    if (result && result.token) {   
        updateToken(result.token);
        const registeredEmails = JSON.parse
        (localStorage.getItem("registeredEmails")) || [];
+
     if(!registeredEmails.includes(email)) {
       registeredEmails.push(email);
       localStorage.setItem("registeredEmails", JSON.stringify(registeredEmails));
@@ -261,16 +273,25 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
       setTooltipLogo(checkImage);
       setInfoTooltipOpen(true);
       setIsLoggedIn(true);
-      }
-    } catch (error) {
+      navigate("/");
+      
+    } else {
       setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
       setInfoTooltipOpen(true);
     }
+   } catch (error) {     
+    console.error("Error en el inicio de sesión:", error);  
+    setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");   
+    setTooltipLogo(errorImage);  
+    setInfoTooltipOpen(true);   
+   }
   };
 
-  const handleSignin = async (email, password) => {
+  const handleSignin = async (event, email, password) => {
+    event.preventDefault();
     const registeredEmails = JSON.parse(localStorage.getItem("registeredEmails")) || [];
+
     if (!registeredEmails.includes(email)) {
       setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
@@ -280,7 +301,7 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   try {
     const result = await auth.login(email, password);
-    if(result.success) {
+    if(result && result.token) {
       updateToken(result.token);
       const userInfo = await getUserInfo(result.token);
       setCurrentUser(userInfo);
