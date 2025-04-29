@@ -1,141 +1,151 @@
-import token from "./token";
+import { getToken } from "./token";
 
 class Api {
-    constructor({BASE_URL, headers}) {
+    constructor({BASE_URL}) {
         this.BASE_URL = BASE_URL;
-        this.headers = headers;
+    }
+
+    headers() {
+        const token = getToken();
+        console.log('Token usado para la solicitud:', token);
+        return {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json',
+        };
     }
 
     async getUserInfo() {
         try {  
            const res = await fetch(`${this.BASE_URL}/users/me`, { 
-              headers: this.headers,          
+                method : "GET",
+                headers: this.headers(),          
         });      
         if (!res.ok) {   
-              throw new Error(`Error: ${res.status}`);     
-         }    
-         return await res.json();    
+              throw new Error(`Error: ${res.status} - ${res.statusText}`);     
+         }
+         
+         const data = await res.json();
+         
+         if (!data || typeof data !== 'object') {
+            throw new Error("La respuesta no tiene el formato esperado.");
+        }
+        return data;
      } catch (error) {    
-         console.log(error);  
+         console.log("Error al obtener la información del usuario:", error);  
          throw error;     
        }
     }
 
-    getInitialCards() {
-        return fetch(`${this.baseUrl}/cards`, {
-            headers: this.headers,
-        })
-        .then((res) => {
-            if (res.ok)  {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`)
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    async getInitialCards() {
+        try {
+            console.log('Token used for request:', getToken());
+            const res = await fetch(`${this.BASE_URL}/cards`, {
+                method: "GET",
+                headers: this.headers(),
+            });   
+        
+        if (!res.ok)  {
+            throw new Error(`Error: ${res.status} - ${res.statusText}`);
+         }
+         return await res.json();
+        }catch(error)  {
+            console.log("Error fetching initial cards:", error);
+            throw error;
+        }
     }
 
-    updateUserProfile(name, about) {
-        return fetch(`${this.baseUrl}/users/me`, {
-            method: "PATCH",
-            headers: this.headers,
-            body: JSON.stringify({
-                name: name,
-                about: about,
-            }),
-        })
-        .then((res) => {
-            if (res.ok)  {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`);
-        })
-        .catch((error) => {
-            console.log(error);
-        }); 
+    async updateUserProfile(name, about) {
+        try {
+            const res = await fetch(`${this.BASE_URL}/users/me`, {
+                method: "PATCH",
+                headers: this.headers(),
+                body: JSON.stringify({ name, about }),
+            });
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} - ${res.statusText}`);
+        }
+        return await res.json();
+      } catch (error) {
+            console.error("Error updating user profile:", error);
+            throw error;
+        }
     }
 
-    createCard(link, name) {
-        return fetch(`${this.baseUrl}/cards`, {
-            method: "POST",
-            headers: this.headers,
-            body: JSON.stringify({
-                link: link,
-                name: name,
-            }),
-         })
-         .then((res) => {
-            if (res.ok)  {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`)
-        })
-        .catch((error) => {
-            console.log(error);
-        }); 
+    async createCard(link, name) {
+        try {
+            const res = await fetch(`${this.BASE_URL}/cards`, {
+                method: "POST",
+                headers: this.headers(),
+                body: JSON.stringify({ link, name }),
+            });
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} - ${res.statusText}`);
+        }
+        return await res.json();
+      } catch (error) {
+        console.error("Error creating card:", error);
+        throw error;
+        }
     }
 
-    deleteCard(cardId) {
-        return fetch(`${this.baseUrl}/cards/${cardId}`, {
-            method: "DELETE",
-            headers: this.headers,
-        })
-        .then((res) => {
-            if (res.ok)  {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`)
-        })
-        .catch((error) => {
-            console.log(error);
-        }); 
-    }
-
-    changeLikeCardStatus(cardId, isLiked) {
-        return fetch(`${this.baseUrl}/cards/likes${cardId}`, {
-            method: isLiked ? "DELETE" : "PUT",
-            headers: this.headers,
-          })
-          .then((res) => {
-            if (res.ok)  {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`)
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
-    updateAvatar(avatar) {
-        return fetch(`${this.baseUrl}/users/me/avatar`, {
-            method: "PATCH",
-            headers: this.headers,
-            body: JSON.stringify({
-                avatar: avatar,
-            }),
-          })
-          .then((res) => {
-            if (res.ok)  {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`)
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    async deleteCard(cardId) {
+        try {
+            const res = await fetch(`${this.BASE_URL}/cards/${cardId}`, {
+                method: "DELETE",
+                headers: this.headers(),
+            });
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} - ${res.statusText}`);
+        }
+        return await res.json();
+    } catch (error) {
+        console.error("Error deleting card:", error);
+        throw error;
     }
 }
 
-const api = () =>
-    new Api({
-        BASE_URL: "http://localhost:5003",
+    async changeLikeCardStatus(cardId, isLiked) {
+        try {
+            const res = await fetch(`${this.BASE_URL}/cards/likes/${cardId}`, {
+                method: isLiked ? "DELETE" : "PUT",
+                headers: this.headers(),
+            });
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} - ${res.statusText}`);
+        }
+        return await res.json();
+    } catch (error) {
+        console.error("Error changing like status:", error);
+        throw error;
+    }
+}
+    
+    async updateAvatar(avatar) {
+        try {
+            const res = await fetch(`${this.BASE_URL}/users/me/avatar`, {
+                method: "PATCH",
+                headers: this.headers(),
+                body: JSON.stringify({ avatar }),
+            });
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} - ${res.statusText}`);
+        }
+        return await res.json();
+    } catch (error) {
+        console.error("Error updating avatar:", error);
+        throw error;
+    }
+}
+}
+
+const apiInstance = new Api({
+        BASE_URL: "http://localhost:5005",
         headers: {
-            authorization: token.getToken(),
+            'Authorization': `Bearer ${getToken()}`,
             "content-Type": "application/json",
 
             
         },
     });
 
-export default api;
+export default apiInstance;

@@ -1,25 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import auth from "../utils/auth";
 import Header from "./Header/Header";
 
-const Login = ({onLogin}) => {
+const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         
         e.preventDefault();
-        onLogin(email, password);
-        setIsModalOpen(true);
-        
-    };
+        try {
+            await auth.login(email, password);
+            setIsModalOpen(true);
+            navigate("/");
+        } catch (error) {
+            console.error("Error al iniciar sesión:", error);
+            setErrorMessage("Error al iniciar sesión. Por favor, verifica tus credenciales.");
+        }
+       
+     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         navigate("/")
-    }
+    };
 
     return (  
     <div id="container">
@@ -30,7 +37,8 @@ const Login = ({onLogin}) => {
      <input 
         id="container_input"       
         type="email"    
-        placeholder="Correo electronico"    
+        placeholder="Correo electronico" 
+        value={email}
         onChange={(e) => setEmail(e.target.value)}    
         required     
          />     
@@ -51,14 +59,14 @@ const Login = ({onLogin}) => {
              }}
              >Regístrate aquí
              </span>     
-              </p>
+         </p>
              
-          </form>
+    </form>
           
           
-          </div>
-          );
-     };
+    </div>
+  );
+};
                 
     export default Login;
 

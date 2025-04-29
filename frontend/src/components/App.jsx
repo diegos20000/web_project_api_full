@@ -8,7 +8,7 @@ import EditProfile from "./EditProfile/EditProfile.jsx";
 import EditAvatar from "./Avatar/EditAvatar.jsx";
 import AddPlacePopup from "./AddPlacePopup.jsx";
 import Footer from "./Footer/Footer.jsx";
-import CurrentUserContext from "../contexts/CurrentUserContext.js";
+import { CurrentUserProvider } from "../contexts/CurrentUserContext.jsx";
 import "../../index.css";
 
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
@@ -16,13 +16,15 @@ import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
+import { setToken, getToken, removeToken } from "../utils/token.js";
 
 import auth from '../utils/auth.js';
 
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
+import apiInstance from "../utils/api.js";
 
-const BASE_URL = "http://localhost:5003";
+const BASE_URL = "http://localhost:5005";
 
 
 function App() {
@@ -30,12 +32,10 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
-  //const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardToDelete, setCardToDelete] = useState(null);
-  const [currentUser, setCurrentUser] = useState({
-    
-  });
+  const [currentUser, setCurrentUser] = useState({});
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);  
   const [tooltipLogo, setTooltipLogo] = useState('');
@@ -44,32 +44,15 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const [cards, setCards] = useState([
-    {
-      isLiked: false,
-      _id: "5d1f0611d321eb4bdcd707dd",
-      name: "Yosemite Valley",
-      link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-      owner: "5d1f0611d321eb4bdcd707dd",
-      createdAt: "2019-07-05T08:10:57.741Z",
-      likes: [],
-    },
-    {
-      isLiked: false,
-      _id: "5d1f064ed321eb4bdcd707de",
-      name: "Lake Louise",
-      link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-      owner: "5d1f0611d321eb4bdcd707dd",
-      createdAt: "2019-07-05T08:11:58.324Z",
-      likes: [],
-    },
-  ]);
+  
 
-const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [token, setTokenState] = useState(getToken() || "");
 
   const updateToken = (newToken) => {  
-    localStorage.setItem("token", newToken); 
     setToken(newToken);
+    localStorage.setItem("token", newToken);
+    console.log('Token almacenado:', newToken);
+    setTokenState(newToken);
   };
     
   const removeToken = () => { 
@@ -83,12 +66,18 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
        if (token) {  
          try {      
            const userInfo = await getUserInfo(token);
-           const initialCards = await fetch(`${BASE_URL}/cards`, {  
+           const response = await fetch(`${BASE_URL}/cards`, {  
                method: "GET",     
                headers: {           
                    'Authorization': `Bearer ${token}`,     
               },    
-            }).then(res => res.json());
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const initialCards = await response.json();
            
            setCurrentUser(userInfo); 
            setCards(initialCards); 
@@ -102,6 +91,24 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
      };   
        fetchUserInfo(); 
     }, [token, navigate]);
+
+    useEffect(() => {
+      const fetchInitialCards = async () => {
+        try {
+          const response = await apiInstance.getInitialCards();
+          if (response && Array.isArray(response)) {
+            setCards(response);
+
+          } else {
+            console.error("La respuesta no es un array de tarjetas");
+          }
+          
+        } catch (error) {
+          console.error("Error loading initial cards:", error);
+        }
+      };
+      fetchInitialCards();
+    }, []);
 
   useEffect(() => { 
     const handleEscKey = (evt) => { 
@@ -176,8 +183,7 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
   };
 
   const handleUpdateAvatar = async (data) => {
-    const token = localStorage.getItem("token");
-    console.log("Token:", token);
+    
     try {
       
       const response = await fetch(`${BASE_URL}/users/me/avatar`, {
@@ -220,11 +226,13 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
   };
 
   const handleLogin = (newToken) => {
-    setToken(newToken);
+    updateToken(newToken);
+    setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
-    setToken("");
+    removeToken();
+    setTokenState("");
     setIsLoggedIn(false);
     setCurrentUser({});
     navigate("/signin");
@@ -243,8 +251,9 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
       });
 
       if(response.ok) {
-        const {data} = await response.json();
-        return data.data;
+        const userInfo = await response.json();
+        
+        return userInfo;
       } else {
         throw new Error("No se pudo obtener la información del usuario");
       }
@@ -299,10 +308,14 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
       return;
     }
 
-  try {
-    const result = await auth.login(email, password);
+    try {
+      const result = await auth.login(email, password);
+
     if(result && result.token) {
+      setToken(result.token);
+      console.log('Token almacenado:', result.token);
       updateToken(result.token);
+      
       const userInfo = await getUserInfo(result.token);
       setCurrentUser(userInfo);
       setIsLoggedIn(true);
@@ -321,14 +334,14 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("token");
+    removeToken();
     setIsLoggedIn(false);
     setCurrentUser(null);
     navigate("/signin");
   };
 
   return (  
-      <CurrentUserContext.Provider value={currentUser}>  
+      <CurrentUserProvider>  
           <div className="page">    
       
           <Header onSignOut={handleSignOut} isLoggedIn={isLoggedIn} />     
@@ -396,7 +409,7 @@ const [token, setToken] = useState(localStorage.getItem("token") || "");
                
              </div>   
                  
-          </CurrentUserContext.Provider>  
+          </CurrentUserProvider>  
         );
                 
       }

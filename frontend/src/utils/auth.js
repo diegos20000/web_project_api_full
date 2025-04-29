@@ -78,7 +78,7 @@ class Auth {
 
 
 const auth = new Auth({
-  BASE_URL: "http://localhost:5003",
+  BASE_URL: "http://localhost:5005",
 });
 
 export default auth;
