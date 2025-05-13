@@ -4,7 +4,7 @@ const cards = require("./routes/cards");
 const users = require("./routes/users");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const {login, createUser, getCurrentUser} = require("./controllers/users");
+const {login, createUser, getUsers} = require("./controllers/users");
 const { requestLogger, errorLogger } = require('./middleware/Logger');
 const auth = require("./middleware/auth");
 const { errors } = require('celebrate');
@@ -18,8 +18,6 @@ const app = express();
 // Configuración para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middlewares
-app.use(express.json());
 
 // Configuración de CORS
 const allowedCors = [ 
@@ -50,14 +48,22 @@ app.use((req, res, next) => {
    next();
 });
 
+app.use(express.json());
+app.use(requestLogger);
+
 // Conectar a MongoDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/mydb", {})
   .then(() => console.log("Conexión a MongoDB exitosa"))
   .catch((err) => console.error("Error de conexión a MongoDB:", err));
 
-// Middleware de logging
-app.use(requestLogger);
+// Rutas protegidas
+app.use("/users", users);
+app.use("/cards", cards);
+
+// Middleware de manejo de errores global
+app.use(errorLogger);
+app.use(errorHandler);
 
 //crash-test
 app.get('/crash-test', () => {
@@ -73,12 +79,11 @@ app.post("/signup", createUser);
 // Middleware de autorización
 app.use(auth);
 
-// Rutas protegidas
-app.use("/cards", cards);
-app.use("/users", users);
+
+
 
 // Middleware de manejo de errores
-app.use(errorLogger);
+
 app.use(errors());
 
 // Manejo de rutas no encontradas
@@ -88,11 +93,10 @@ app.all("*", (req, res, next) => {
   next(error);
 });
 
-// Middleware de manejo de errores global
-app.use(errorHandler);
+
 
 // Configuración de puerto y escucha
-const { PORT = 5005 } = process.env;
+const { PORT = 5008 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
@@ -100,16 +104,7 @@ if (process.env.NODE_ENV !== "test") {
  });
 }
 
-function generateToken(user) { 
-  return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-  
-}
 
-function verifyToken(token) {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return null;     }   }
 
 module.exports = app;
 

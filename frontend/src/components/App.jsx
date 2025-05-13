@@ -8,7 +8,7 @@ import EditProfile from "./EditProfile/EditProfile.jsx";
 import EditAvatar from "./Avatar/EditAvatar.jsx";
 import AddPlacePopup from "./AddPlacePopup.jsx";
 import Footer from "./Footer/Footer.jsx";
-import { CurrentUserProvider } from "../contexts/CurrentUserContext.jsx";
+import CurrentUserContext from "../contexts/CurrentUserContext.js";
 import "../../index.css";
 
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
@@ -16,15 +16,12 @@ import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
-import { setToken, getToken, removeToken } from "../utils/token.js";
-
-import auth from '../utils/auth.js';
+import auth from "../utils/auth.js"
 
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
-import apiInstance from "../utils/api.js";
 
-const BASE_URL = "http://localhost:5005";
+const BASE_URL = "http://localhost:5008";
 
 
 function App() {
@@ -32,10 +29,12 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
-  const [cards, setCards] = useState([]);
+  //const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardToDelete, setCardToDelete] = useState(null);
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState({
+    
+  });
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);  
   const [tooltipLogo, setTooltipLogo] = useState('');
@@ -44,97 +43,66 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
+  const [cards, setCards] = useState([
+    {
+      isLiked: false,
+      _id: "5d1f0611d321eb4bdcd707dd",
+      name: "Yosemite Valley",
+      link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
+      owner: "5d1f0611d321eb4bdcd707dd",
+      createdAt: "2019-07-05T08:10:57.741Z",
+      likes: [],
+    },
+    {
+      isLiked: false,
+      _id: "5d1f064ed321eb4bdcd707de",
+      name: "Lake Louise",
+      link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
+      owner: "5d1f0611d321eb4bdcd707dd",
+      createdAt: "2019-07-05T08:11:58.324Z",
+      likes: [],
+    },
+  ]);
+
   
 
-  const [token, setTokenState] = useState(getToken() || "");
-
-  const updateToken = (newToken) => {  
-    setToken(newToken);
-    localStorage.setItem("token", newToken);
-    console.log('Token almacenado:', newToken);
-    setTokenState(newToken);
-  };
-    
-  const removeToken = () => { 
-    localStorage.removeItem("token"); 
-     setToken("");
-  };
-  
-  
   useEffect(() => {
-    const fetchUserInfo = async () => {  
-       if (token) {  
-         try {      
-           const userInfo = await getUserInfo(token);
-           const response = await fetch(`${BASE_URL}/cards`, {  
-               method: "GET",     
-               headers: {           
-                   'Authorization': `Bearer ${token}`,     
-              },    
-            });
+    const jwt = localStorage.getItem("token");
 
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const initialCards = await response.json();
-           
-           setCurrentUser(userInfo); 
-           setCards(initialCards); 
-           setIsLoggedIn(true);
-           navigate("/");    
-         } catch (error) {   
-           console.error("Error fetching user info:", error);  
-           removeToken();      
-        }     
-      }    
-     };   
-       fetchUserInfo(); 
-    }, [token, navigate]);
+    if (jwt) {
+      getUserInfo(jwt)
+      .then(({username, email}) => {
+        setIsLoggedIn(true);
+        setCurrentUser({username, email});
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+      })
+    }
 
-    useEffect(() => {
-      const fetchInitialCards = async () => {
-        try {
-          const response = await apiInstance.getInitialCards();
-          if (response && Array.isArray(response)) {
-            setCards(response);
-
-          } else {
-            console.error("La respuesta no es un array de tarjetas");
-          }
-          
-        } catch (error) {
-          console.error("Error loading initial cards:", error);
-        }
-      };
-      fetchInitialCards();
-    }, []);
-
-  useEffect(() => { 
-    const handleEscKey = (evt) => { 
-      if (evt.key === "Escape") {  
-        closeAllPopups();   
-     }    
-  };    
-    document.addEventListener("keydown", handleEscKey); 
-    return () => {  
-    document.removeEventListener("keydown", handleEscKey);  
-    };  
+    const handleEscKey = (evt) => {
+      if (evt.key === "Escape") {
+        closeAllPopups();
+      }
+    };
+    document.addEventListener("keydown", handleEscKey);
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
   }, []);
- 
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
-  };
+  }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
-  };
+  }
 
   function handleDeletePopupClick(card) {
     setCardToDelete(card);
     setIsDeletePopupOpen(true);
-  };
+  }
 
   function handleCardLike(card) {
     const likes = card.likes || [];
@@ -151,7 +119,7 @@ function App() {
       return c;
     });
     setCards(updatedCards);
-  };
+  }
   async function handleCardDelete() {
     if (!cardToDelete) {
       return;
@@ -161,10 +129,10 @@ function App() {
     );
     setCardToDelete(null);
     setIsDeletePopupOpen(false);
-  };
+  }
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
-  };
+  }
 
   function handleAddPlaceSubmit({ link, name }) {
     const newCard = {
@@ -176,14 +144,15 @@ function App() {
     };
     setCards((prevCards) => [newCard, ...prevCards]);
     closeAllPopups();
-  };
+  }
 
   function handleCardClick(card) {
     setSelectedCard(card);
-  };
+  }
 
   const handleUpdateAvatar = async (data) => {
-    
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
     try {
       
       const response = await fetch(`${BASE_URL}/users/me/avatar`, {
@@ -215,7 +184,7 @@ function App() {
   function onUpdateUser(user) {
     setCurrentUser(user);
     closeAllPopups();
-  };
+  }
 
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
@@ -223,125 +192,81 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
     setIsDeletePopupOpen(false);
-  };
-
-  const handleLogin = (newToken) => {
-    updateToken(newToken);
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    removeToken();
-    setTokenState("");
-    setIsLoggedIn(false);
-    setCurrentUser({});
-    navigate("/signin");
-  };
+  }
 
   
 
   const getUserInfo = async (token) => {
     try {
-      const response = await fetch(`${BASE_URL}/users/me`, {
-        method: "GET",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if(response.ok) {
-        const userInfo = await response.json();
-        
-        return userInfo;
-      } else {
-        throw new Error("No se pudo obtener la información del usuario");
-      }
-    }catch (error) {    
-        console.error("Error al obtener la información del usuario:", error);  
-        throw error;  
-      }
-   };
+      return await auth.getUserInfo();
+    } catch (error) {
+      console.error("Error al obtener la información del usuario:", error);
+      throw error;
+    }
+  };
     
   
 
   const handleSignup = async (email, password) => {
+    
     try {
-    const result = await auth.register(email, password);
+      const registeredEmails = JSON.parse
+      (localStorage.getItem("registeredEmails")) || [];
+      const result = await auth.register(email, password);
 
-    if (result && result.token) {   
-       updateToken(result.token);
-       const registeredEmails = JSON.parse
-       (localStorage.getItem("registeredEmails")) || [];
-
-    if(!registeredEmails.includes(email)) {
       registeredEmails.push(email);
       localStorage.setItem("registeredEmails", JSON.stringify(registeredEmails));
-    }
+      console.log("Correos electrónicos registrados:", registeredEmails);
+
       setTooltipMessage("¡Correcto! Ya estás registrado.");
       setTooltipLogo(checkImage);
       setInfoTooltipOpen(true);
       setIsLoggedIn(true);
-      navigate("/");
-      
-    } else {
+    } catch (error) {
       setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
       setInfoTooltipOpen(true);
+       console.error("Error en la registración:", error);
     }
-   } catch (error) {     
-    console.error("Error en el inicio de sesión:", error);  
-    setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");   
-    setTooltipLogo(errorImage);  
-    setInfoTooltipOpen(true);   
-   }
   };
 
-  const handleSignin = async (event, email, password) => {
-    event.preventDefault();
-    const registeredEmails = JSON.parse(localStorage.getItem("registeredEmails")) || [];
-
-    if (!registeredEmails.includes(email)) {
-      setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
-      setTooltipLogo(errorImage);
-      setInfoTooltipOpen(true);
-      return;
-    }
+  const handleSignin = async (email, password) => {
+    
+    //const registeredEmails = JSON.parse(localStorage.getItem("registeredEmails")) || [];
+    //if (!registeredEmails.includes(email)) {
+     // setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
+     // setTooltipLogo(errorImage);
+      //setInfoTooltipOpen(true);
+      //return;
+    //}
 
     try {
+      console.log("Email ingresado:", email);
+      console.log("Hash de la contraseña almacenado:", user.password);
+      console.log("Contraseña ingresada:", password);
       const result = await auth.login(email, password);
-
-    if(result && result.token) {
-      setToken(result.token);
-      console.log('Token almacenado:', result.token);
-      updateToken(result.token);
-      
+      localStorage.setItem("token", result.token);
       const userInfo = await getUserInfo(result.token);
       setCurrentUser(userInfo);
       setIsLoggedIn(true);
       navigate("/");
-    } else {
+    } catch (error) {
       setTooltipMessage( "Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
       setInfoTooltipOpen(true);
-     }
-    } catch (error) {     
-      console.error("Error en el inicio de sesión:", error);  
-      setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");   
-      setTooltipLogo(errorImage);  
-      setInfoTooltipOpen(true);   
-     }
+      console.error("Error en el inicio de sesión:", error);
+    }
   };
 
   const handleSignOut = () => {
-    removeToken();
+    auth.logout();
     setIsLoggedIn(false);
     setCurrentUser(null);
     navigate("/signin");
   };
 
   return (  
-      <CurrentUserProvider>  
+      <CurrentUserContext.Provider value={currentUser}>  
           <div className="page">    
       
           <Header onSignOut={handleSignOut} isLoggedIn={isLoggedIn} />     
@@ -350,7 +275,7 @@ function App() {
              <Route path="/signin" element={<Login onLogin={handleSignin} />} />        
              <Route path="/" element={          
                 <ProtectedRoute isAuthenticated={isLoggedIn}>          
-              <>           
+                  <>           
                         
                <Main             
                  cards={cards}         
@@ -360,8 +285,8 @@ function App() {
                  onCardClick={setSelectedCard}                
                  onCardLike={handleCardLike}                 
                  onCardDelete={(card) => {                   
-                   setCardToDelete(card);                  
-                   setIsDeletePopupOpen(true);           
+                 setCardToDelete(card);                  
+                 setIsDeletePopupOpen(true);           
                   }}              
                       />             
                                
@@ -407,12 +332,12 @@ function App() {
                     
                <Footer />   
                
-             </div>   
+                 </div>   
                  
-          </CurrentUserProvider>  
-        );
+                </CurrentUserContext.Provider>  );
                 
-      }
+              }
   
   
-     export default App;
+              export default App;
+

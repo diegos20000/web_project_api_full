@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "web_project_around_react",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,20 +7,12 @@
     "dev": "vite --open",
     "build": "vite build",
     "lint": "eslint .",
-    "start": "vite",
-    "preview": "vite preview",
-    "test": "jest",
-    "deploy": "npm run build && scp -r ./dist/* dsuccess2020@xyzzz.chickenkiller.com:/home/dsuccess2020/web_project_api_full/frontend"
-     
+    "preview": "vite preview"
   },
-
   "dependencies": {
-    "celebrate": "^15.0.3",
-    "joi": "^17.13.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.29.0",
-    "validator": "^13.15.0"
+    "react-router-dom": "^6.29.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -32,7 +24,6 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
-    "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "vite": "^5.4.10"
   }

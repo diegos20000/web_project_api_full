@@ -1,49 +1,38 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import auth from "../utils/auth";
 import Header from "./Header/Header";
 
-const Login = () => {
+const Login = ({onLogin}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleSubmit = async (e) => {
-        
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            await auth.login(email, password);
-            setIsModalOpen(true);
-            navigate("/");
-        } catch (error) {
-            console.error("Error al iniciar sesión:", error);
-            setErrorMessage("Error al iniciar sesión. Por favor, verifica tus credenciales.");
-        }
-       
-     };
+        onLogin(email, password);
+        setIsModalOpen(true);
+        
+    };
 
     const closeModal = () => {
         setIsModalOpen(false);
         navigate("/")
-    };
+    }
 
     return (  
     <div id="container">
-          
-    <form onSubmit={handleSubmit} id="container">    
-     <h2>Iniciar Sesión</h2>  
-
-     <input 
-        id="container_input"       
+        
+      
+    <form onSubmit={handleSubmit} id="container">     
+     <h2>Iniciar Sesión</h2>   
+     <input id="container_input"       
         type="email"    
-        placeholder="Correo electronico" 
-        value={email}
+        placeholder="Correo electronico"    
         onChange={(e) => setEmail(e.target.value)}    
         required     
          />     
-     <input 
-        id="container_input"       
+     <input id="container_input"       
         type="password"    
         placeholder="Contraseña"     
         value={password}     
@@ -52,21 +41,18 @@ const Login = () => {
            />     
          <button id="container_button" type="submit">Inicia sesión</button>
          <p>      
-            ¿Aún no eres miembro?{" "} 
-            <span 
-            onClick={() => 
+            ¿Aún no eres miembro? <span onClick={() => 
             navigate("/signup")} style={{ cursor: 'pointer', color: 'blue'
              }}
-             >Regístrate aquí
-             </span>     
-         </p>
+             >Regístrate aquí</span>     
+              </p>
              
-    </form>
+          </form>
           
           
-    </div>
-  );
-};
+          </div>
+          );
+     };
                 
     export default Login;
 

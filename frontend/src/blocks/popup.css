@@ -98,6 +98,7 @@
   flex-direction: column;
   gap: 10px;
   border: none;
+  
 }
 .pop-up__form-item {
   width: 358px;
@@ -162,6 +163,8 @@
   width: 200%;
   font-weight: normal;
   color: #000;
+  background: none;
+  
 }
 
 .popup__input-avatar:invalid{

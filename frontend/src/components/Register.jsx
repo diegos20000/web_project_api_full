@@ -1,17 +1,26 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header/Header";
+import auth from "../utils/auth";
 
 
 const Register = ({onRegister}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword]= useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onRegister(email, password);
-        navigate("/login");
+        setError("");
+        try {
+            await auth.register(email, password);
+            navigate("/login");
+        } catch (error) {
+            console.error("Error en el registro:", error);
+            setError(error.message);
+        }
+        
     };
     
     return ( 
