@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import trashButton from "../../images/trashicons.png";
 
-import CurrentUserContext from "../../contexts/CurrentUserContext";
+import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
 export default function Card(props) {
   const { card, onCardClick, onCardLike, onCardDelete } = props;

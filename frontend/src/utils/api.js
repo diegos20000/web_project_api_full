@@ -139,13 +139,7 @@ class Api {
 }
 
 const apiInstance = new Api({
-        BASE_URL: "http://localhost:5008",
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            "content-Type": "application/json",
-
-            
-        },
+        BASE_URL: "https://api.xyzzz.chickenkiller.com",
     });
 
 export default apiInstance;

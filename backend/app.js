@@ -4,20 +4,16 @@ const cards = require("./routes/cards");
 const users = require("./routes/users");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const {login, createUser, getUsers} = require("./controllers/users");
+const {login, createUser} = require("./controllers/users");
 const { requestLogger, errorLogger } = require('./middleware/Logger');
 const auth = require("./middleware/auth");
 const { errors } = require('celebrate');
 const errorHandler = require('./middleware/errorHandler');
-const jwt = require('jsonwebtoken');
 const path = require("path");
 
 // Crear aplicación Express
 const app = express();
-
-// Configuración para servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.json());
 
 // Configuración de CORS
 const allowedCors = [ 
@@ -48,8 +44,8 @@ app.use((req, res, next) => {
    next();
 });
 
-app.use(express.json());
-app.use(requestLogger);
+// Configuración para servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Conectar a MongoDB
 mongoose
@@ -57,15 +53,9 @@ mongoose
   .then(() => console.log("Conexión a MongoDB exitosa"))
   .catch((err) => console.error("Error de conexión a MongoDB:", err));
 
-// Rutas protegidas
-app.use("/users", users);
-app.use("/cards", cards);
+// Logging middleware
+app.use(requestLogger);
 
-// Middleware de manejo de errores global
-app.use(errorLogger);
-app.use(errorHandler);
-
-//crash-test
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('El servidor va a caer');
@@ -76,14 +66,15 @@ app.get('/crash-test', () => {
 app.post("/signin", login);
 app.post("/signup", createUser);
 
-// Middleware de autorización
+// Rutas protegidas
 app.use(auth);
+app.use("/users", users);
+app.use("/cards", cards);
 
+// Error logging middleware
+app.use(errorLogger);
 
-
-
-// Middleware de manejo de errores
-
+// Celebrate error handling
 app.use(errors());
 
 // Manejo de rutas no encontradas
@@ -93,10 +84,12 @@ app.all("*", (req, res, next) => {
   next(error);
 });
 
+// Error handling middleware
+app.use(errorHandler);
 
 
 // Configuración de puerto y escucha
-const { PORT = 5008 } = process.env;
+const { PORT = 5004 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {

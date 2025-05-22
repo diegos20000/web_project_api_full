@@ -1,13 +1,40 @@
-const  User = require("../models/user");
+const  { User, avatarValidator } = require("../models/user");
 const jwt = require("jsonwebtoken");
-const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require("bcryptjs");
 const express = require('express');   
 const router = express.Router();
 
+
 const generateToken = (user) => {
-  return jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+  console.log("JWT Secret:", process.env.JWT_SECRET);
+  return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
+
+const updateAvatar = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const {avatar} = req.body;
+
+    if (!avatarValidator(avatar)) {
+      return res.status(400).send({message: "Invalid avatar URL"});
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {avatar},
+      {new: true, runValidators: true}
+    );
+
+    if (!updatedUser) {
+      return res.status(404).send({message: "User not found"});
+    }
+
+    res.send(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({message: 'Internal server error'});
+  }
+}
 
 const getUsers = async (req, res, next) => {
   try {
@@ -84,29 +111,27 @@ const createUser = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   const {email, password} = req.body;
-  console.log("Intentando iniciar sesión con:", email);
-  try {
-    const user = await User.findOne({email}).select("+password");
-    console.log("Usuario encontrado:", user);
-    if (!user) {
-      return res.status(401).send({message: "Correo electrónico o contraseña incorrectos"});
-    }
+  
+  User.findOne({email}).select("+password").then(user => {
+      if (!user) {
+        return res.status(401).send({ message: "Correo electrónico o contraseña incorrectos" });
+      }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Contraseña ingresada:", password);
-    console.log("Hash de la contraseña almacenado:", user.password);
-    console.log("¿Coincide la contraseña?", isMatch); 
-    if (!isMatch) {
-      return res.status(401).send({message: "Correo electrónico o contraseña incorrectos" });
-    }
+      return bcrypt.compare(password, user.password).then(isMatch => {
+        if (!isMatch) {
+          return res.status(401).send({ message: "Correo electrónico o contraseña incorrectos" });
+        }
 
-    const token = generateToken(user);
+      const token = generateToken(user);
+      res.status(200).send({ token });
 
-    res.status(200).send({ token }); 
-   } catch (error) { 
+    });
+  })
+  .catch (error => { 
     console.error("Error en el inicio de sesión:", error);  
     next(error);
-     }};
+     });
+  };  
 
 
   const getCurrentUser = (req, res) => {
@@ -114,4 +139,4 @@ const login = async (req, res, next) => {
   };   
 
 
-module.exports = { getUsers, getUserById, createUser, login, getCurrentUser };
+module.exports = { getUsers, getUserById, createUser, login, getCurrentUser, updateAvatar };

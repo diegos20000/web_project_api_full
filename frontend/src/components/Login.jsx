@@ -8,17 +8,18 @@ const Login = ({onLogin}) => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onLogin(email, password);
-        setIsModalOpen(true);
+        try {
+          await onLogin(email, password);
+          navigate("/")
+          setIsModalOpen(true);  
+        } catch (error) {
+          console.error("Login failed:", error);
+        }
+        
         
     };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        navigate("/")
-    }
 
     return (  
     <div id="container">

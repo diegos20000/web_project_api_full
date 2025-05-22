@@ -6,7 +6,7 @@ import AddPlacePopup from "./AddPlacePopup.jsx";
 import avatarImage from "../images/explorer.jpg"
 import Card from "./Card/Card.jsx";
 
-import CurrentUserContext from "../contexts/CurrentUserContext.js";
+import {CurrentUserContext} from "../contexts/CurrentUserContext.jsx";
 import EditProfile from "./EditProfile/EditProfile.jsx";
 
 export default function Main({
@@ -20,6 +20,10 @@ export default function Main({
 }) {
   const currentUser = useContext(CurrentUserContext);
 
+  if (!currentUser) {
+    return <div>Loading...</div>; 
+  }
+
   return (
     <main className="content">
       <div
@@ -28,7 +32,7 @@ export default function Main({
         style={{ backgroundImage: `url(${currentUser.avatar})` }}
       >
         <img
-          src={avatarImage}
+          src={currentUser.avatar || avatarImage}
           alt="Avatar de usuario"
           className="profile__img"
           onClick={onEditAvatarClick}

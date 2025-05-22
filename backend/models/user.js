@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require("bcryptjs");
+
 
 const avatarValidator = (value) => {
   const urlRegex =
@@ -28,8 +28,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: validator.isEmail,
-      message: "email invalido",
+      validator: (value) => validator.isEmail(value),
+      message: (props) => `${props.value} no es un correo electrónico válido!`,
     },
   },
 
@@ -43,21 +43,15 @@ const userSchema = new mongoose.Schema({
 
   avatar: {
     type: String,
-    //required: true,
-    //default: "",
     validate: {
       validator: avatarValidator,
-      message: (props) =>
-        `${props.value} no es un enlace válido para el avatar!`,
+      message: (props) => `${props.value} no es un enlace válido para el avatar!`,
     },
   },
 });
 
-userSchema.pre('save', function(next) {
-  if (this.isModified('password')) {
-  this.password = bcrypt.hashSync(this.password, 10);
- }    
-next();
-});
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+module.exports = { User, avatarValidator };
+
+

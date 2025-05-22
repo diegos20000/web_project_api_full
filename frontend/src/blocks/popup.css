@@ -98,11 +98,12 @@
   flex-direction: column;
   gap: 10px;
   border: none;
+  width: 100%;
   
 }
 .pop-up__form-item {
   width: 358px;
-  height: 27.26px;
+  height: auto;
   border-top: 0;
   border-left: 0;
   border-right: 0;
@@ -160,12 +161,17 @@
 }
 
 .popup__input-avatar{
-  width: 200%;
+  width: 100%;
   font-weight: normal;
-  color: #000;
-  background: none;
-  
+  border: none;       
+  outline: none;
+  padding: 10px;
+  box-sizing: border-box;
 }
+
+
+
+
 
 .popup__input-avatar:invalid{
   border-bottom: 1px solid red;

@@ -11,10 +11,16 @@ export default function EditAvatar({ onClose, isOpen, onUpdateAvatar }) {
     e.preventDefault();
     setButtonText("Guardando...");
 
-    await onUpdateAvatar({
-      avatar: avatarRef.current.value,
-    });
+    const url = avatarRef.current.value;
+    console.log("Avatar URL:", url);
 
+    if (!url || !url.startsWith('http')) {
+      console.error('Invalid URL:', url);
+      setButtonText("Guardar");
+      return;
+    }
+
+    await onUpdateAvatar({ avatar: url });
     setButtonText("Guardar");
   }
 
@@ -31,6 +37,7 @@ export default function EditAvatar({ onClose, isOpen, onUpdateAvatar }) {
       onClose={onClose}
       onSubmit={handleSubmit}
       buttonText={buttonText}
+      className="avatar-popup"
     >
       <fieldset className="profile__img">
         <input

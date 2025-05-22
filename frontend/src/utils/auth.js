@@ -14,7 +14,10 @@ async _request(endpoint, method = "GET", body = null) {
 
 if (token) {
   headers["Authorization"] = `Bearer ${token}`;
-}
+  console.log("Token utilizado:", token);
+}else {       
+  console.error("Token no proporcionado.");   
+ }
 
 const options = {
   method,
@@ -55,6 +58,7 @@ async login (email, password) {
     if (data.token) {
       setToken(data.token);
     }
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error en el acceso:", error);
@@ -68,7 +72,7 @@ logout() {
 
 async getUserInfo() {
   try {
-    return await this._request("/users/me");
+    return await this._request("/users/me", "GET");
   } catch (error) {
     console.error("Error al obtener información del usuario:", error);
     throw error;
@@ -77,7 +81,7 @@ async getUserInfo() {
 }
 
 const auth = new Auth({
-  BASE_URL: "http://localhost:5008",
+  BASE_URL: "https://api.xyzzz.chickenkiller.com",
 });
 
 export default auth;

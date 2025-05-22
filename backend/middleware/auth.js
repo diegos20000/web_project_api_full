@@ -1,19 +1,25 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const {User} = require("../models/user");
+
 
 const auth = async (req, res, next) => {
     try {
         const authHeader = req.headers["authorization"];
+        console.log("Encabezado de autorización recibido:", authHeader);
         
-    if (!authHeader || !authHeader.toLowerCase().startsWith("Bearer ")) {
-            
+    if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
+        console.log("No se proporcionó el token.");
         return res.status(401).send({ message: "Acceso denegado. Token no proporcionado." });
    } 
     const token = authHeader.replace("Bearer ", "").trim();
+    console.log("Token extraído:", token);
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
+    
 
     if (!user) { 
+        console.log("Usuario no encontrado.");
         return res.status(404).send({ message: "Usuario no encontrado." });      
     }
 

@@ -8,9 +8,9 @@ import EditProfile from "./EditProfile/EditProfile.jsx";
 import EditAvatar from "./Avatar/EditAvatar.jsx";
 import AddPlacePopup from "./AddPlacePopup.jsx";
 import Footer from "./Footer/Footer.jsx";
-import CurrentUserContext from "../contexts/CurrentUserContext.js";
+import {CurrentUserContext} from "../contexts/CurrentUserContext.jsx";
 import "../../index.css";
-
+import { setToken, getToken } from "../utils/token.js";
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
@@ -21,7 +21,7 @@ import auth from "../utils/auth.js"
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
 
-const BASE_URL = "http://localhost:5008";
+const BASE_URL = "https://xyzzz.chickenkiller.com";
 
 
 function App() {
@@ -70,14 +70,14 @@ function App() {
     const jwt = localStorage.getItem("token");
 
     if (jwt) {
-      getUserInfo(jwt)
-      .then(({username, email}) => {
-        setIsLoggedIn(true);
-        setCurrentUser({username, email});
+      getUserInfo()
+        .then(userInfo => {
+          setIsLoggedIn(true);
+          setCurrentUser(userInfo);
       })
       .catch(() => {
         localStorage.removeItem("token");
-      })
+      });
     }
 
     const handleEscKey = (evt) => {
@@ -151,8 +151,14 @@ function App() {
   }
 
   const handleUpdateAvatar = async (data) => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     console.log("Token:", token);
+
+    if (!token) {
+      console.error("No token found. User may not be logged in.");
+      return;
+    }
+
     try {
       
       const response = await fetch(`${BASE_URL}/users/me/avatar`, {
@@ -161,10 +167,10 @@ function App() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          avatar: data.avatar,
-        }),
+        body: JSON.stringify(data),
       });
+
+      console.log("Response Status:", response.status);
       
       if(response.ok) {
         const updatedUser = await response.json();
@@ -174,6 +180,8 @@ function App() {
         }));
         closeAllPopups();
       } else {
+        const errorData = await response.json();
+        console.error("Error details:", errorData);
         throw new Error("Error al actualizar avatar");
       }
     } catch(error) {
@@ -196,9 +204,10 @@ function App() {
 
   
 
-  const getUserInfo = async (token) => {
+  const getUserInfo = async () => {
     try {
-      return await auth.getUserInfo();
+      const userInfo = await auth.getUserInfo();
+      return userInfo;
     } catch (error) {
       console.error("Error al obtener la información del usuario:", error);
       throw error;
@@ -213,6 +222,10 @@ function App() {
       const registeredEmails = JSON.parse
       (localStorage.getItem("registeredEmails")) || [];
       const result = await auth.register(email, password);
+
+      if (result.token) {
+        setToken(result.token);
+      }
 
       registeredEmails.push(email);
       localStorage.setItem("registeredEmails", JSON.stringify(registeredEmails));
@@ -232,21 +245,20 @@ function App() {
 
   const handleSignin = async (email, password) => {
     
-    //const registeredEmails = JSON.parse(localStorage.getItem("registeredEmails")) || [];
-    //if (!registeredEmails.includes(email)) {
-     // setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
-     // setTooltipLogo(errorImage);
-      //setInfoTooltipOpen(true);
-      //return;
-    //}
-
     try {
       console.log("Email ingresado:", email);
-      console.log("Hash de la contraseña almacenado:", user.password);
       console.log("Contraseña ingresada:", password);
-      const result = await auth.login(email, password);
-      localStorage.setItem("token", result.token);
-      const userInfo = await getUserInfo(result.token);
+
+      const user = await auth.login(email, password);
+
+      if (user.token) {
+        setToken(user.token);
+        console.log("Token almacenado:", getToken());
+      } else {
+        throw new Error("No se recibió un token.");
+      }
+
+      const userInfo = await getUserInfo();
       setCurrentUser(userInfo);
       setIsLoggedIn(true);
       navigate("/");
@@ -276,7 +288,7 @@ function App() {
              <Route path="/" element={          
                 <ProtectedRoute isAuthenticated={isLoggedIn}>          
                   <>           
-                        
+                       
                <Main             
                  cards={cards}         
                  onEditProfileClick={() => setIsEditProfilePopupOpen(true)}            
