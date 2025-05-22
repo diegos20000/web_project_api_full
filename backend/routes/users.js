@@ -13,8 +13,8 @@ const {
 
 // Rutas protegidas
 router.get("/me", auth, getCurrentUser);
-router.get("/:id", auth, getUserById);
-router.get("/", auth, getUsers);
+router.get("/:id", getUserById);
+router.get("/", getUsers);
 router.patch("/me/avatar", auth, updateAvatar);
 
 

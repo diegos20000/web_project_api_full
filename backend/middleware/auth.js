@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
         const authHeader = req.headers["authorization"];
         console.log("Encabezado de autorización recibido:", authHeader);
         
-    if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         console.log("No se proporcionó el token.");
         return res.status(401).send({ message: "Acceso denegado. Token no proporcionado." });
    } 
