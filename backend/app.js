@@ -19,7 +19,8 @@ app.use(express.json());
 const allowedCors = [ 
    'https://tripleten.tk',
    'http://tripleten.tk',
-   'http://localhost:3000'];
+   'http://localhost:3000',
+   'https://www.xyzzz.chickenkiller.com'];
 
 app.use((req, res, next) => {
   const {origin} = req.headers;
@@ -89,7 +90,7 @@ app.use(errorHandler);
 
 
 // Configuración de puerto y escucha
-const { PORT = 5005 } = process.env;
+const { PORT = 5007 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
