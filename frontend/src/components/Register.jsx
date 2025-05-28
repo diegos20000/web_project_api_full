@@ -29,7 +29,7 @@ const Register = ({onRegister}) => {
         
         <form onSubmit={handleSubmit} id="register-form">    
         <h2>Registro</h2>    
-         <input id="container_input"       
+         <input id="register-email"       
             type="email"        
             placeholder="Correo electrónico"       
             value={email}        
@@ -42,7 +42,7 @@ const Register = ({onRegister}) => {
             onChange={(e) => setPassword(e.target.value)}       
             required    
           />     
-         <button id="container_button" type="submit">Regístrate</button>
+         <button id="register-button" type="submit">Regístrate</button>
          <p>      
           ¿Ya eres miembro? <span onClick={() => 
           navigate("/login")} style={{ cursor: 'pointer', color: 'blue'
