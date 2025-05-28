@@ -25,7 +25,7 @@ const Login = ({onLogin}) => {
     <div id="container">
         
       
-    <form onSubmit={handleSubmit} id="container">     
+    <form onSubmit={handleSubmit} id="login-form">     
      <h2>Iniciar Sesión</h2>   
      <input id="container_input"       
         type="email"    
@@ -33,7 +33,7 @@ const Login = ({onLogin}) => {
         onChange={(e) => setEmail(e.target.value)}    
         required     
          />     
-     <input id="container_input"       
+     <input id="login-password"       
         type="password"    
         placeholder="Contraseña"     
         value={password}     

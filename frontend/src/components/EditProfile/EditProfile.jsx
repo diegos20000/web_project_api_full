@@ -51,7 +51,7 @@ export default function EditProfile({ onClose, isOpen, onUpdateUser }) {
           placeholder="Nombre"
           minLength="2"
           maxLength="40"
-          id="popup__input popup__input_name"
+          id="edit-profile-name"
           name="name"
           required
           value={name}
@@ -64,7 +64,7 @@ export default function EditProfile({ onClose, isOpen, onUpdateUser }) {
           placeholder="Acerca de mí"
           minLength="2"
           maxLength="200"
-          id="popup__input popup__input_about"
+          id="edit-profile-about"
           name="about"
           required
           value={description}

@@ -27,7 +27,7 @@ const Register = ({onRegister}) => {
         <div id="container">
            
         
-        <form onSubmit={handleSubmit} id="container">    
+        <form onSubmit={handleSubmit} id="register-form">    
         <h2>Registro</h2>    
          <input id="container_input"       
             type="email"        
@@ -35,12 +35,12 @@ const Register = ({onRegister}) => {
             value={email}        
             onChange={(e) => setEmail(e.target.value)}     
             required      />     
-        <input id="container_input"        
+        <input id="register-password"        
             type="password"       
-             placeholder="Contraseña"       
-             value={password}       
+            placeholder="Contraseña"       
+            value={password}       
             onChange={(e) => setPassword(e.target.value)}       
-             required    
+            required    
           />     
          <button id="container_button" type="submit">Regístrate</button>
          <p>      

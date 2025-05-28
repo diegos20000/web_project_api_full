@@ -217,7 +217,7 @@ function App() {
   
 
   const handleSignup = async (email, password) => {
-    
+    console.log("Auth instance:", auth);
     try {
       const registeredEmails = JSON.parse
       (localStorage.getItem("registeredEmails")) || [];
