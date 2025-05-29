@@ -23,7 +23,7 @@ const allowedCors = [
    'https://www.xyzzz.chickenkiller.com',
    'https://xyzzz.chickenkiller.com'];
 
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
   const {origin} = req.headers;
   const {method} = req;
 
@@ -44,7 +44,9 @@ app.use((req, res, next) => {
    }
 
    next();
-});
+}); */
+
+app.use(cors());
 
 // Configuración para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
