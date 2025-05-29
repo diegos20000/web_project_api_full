@@ -45,8 +45,8 @@ const allowedCors = [
 
    next();
 }); */
-
-app.use(cors());
+app.options('*', cors());
+app.use(cors({origin:true, credentials:true}));
 
 // Configuración para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
