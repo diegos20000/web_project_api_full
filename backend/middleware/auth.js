@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
         return res.status(401).send({ message: "Acceso denegado. Token no proporcionado." });
    } 
     const token = authHeader.replace("Bearer ", "").trim();
-    console.log("Token extraído:", token);
+    
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
     const user = await User.findById(decoded.id);

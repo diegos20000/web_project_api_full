@@ -152,7 +152,7 @@ function App() {
 
   const handleUpdateAvatar = async (data) => {
     const token = getToken();
-    console.log("Token:", token);
+    
 
     if (!token) {
       console.error("No token found. User may not be logged in.");
@@ -185,7 +185,7 @@ function App() {
         throw new Error("Error al actualizar avatar");
       }
     } catch(error) {
-      console.log("Error updating avatar:", error);
+      
     }
   };
 
@@ -229,7 +229,7 @@ function App() {
 
       registeredEmails.push(email);
       localStorage.setItem("registeredEmails", JSON.stringify(registeredEmails));
-      console.log("Correos electrónicos registrados:", registeredEmails);
+      
 
       setTooltipMessage("¡Correcto! Ya estás registrado.");
       setTooltipLogo(checkImage);
@@ -246,8 +246,6 @@ function App() {
   const handleSignin = async (email, password) => {
     
     try {
-      console.log("Email ingresado:", email);
-      console.log("Contraseña ingresada:", password);
 
       const user = await auth.login(email, password);
 

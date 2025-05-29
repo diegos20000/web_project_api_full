@@ -39,8 +39,7 @@ try {
 }
 
 async register(email, password) {
-  console.log("BASE_URL:", this.BASE_URL);
-  console.log("Registrando usuario:", { email, password });
+  
   try {
     const data = await this._request("/signup", "POST", { email, password });
      if (data.token) {
