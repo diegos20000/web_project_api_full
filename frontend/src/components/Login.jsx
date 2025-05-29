@@ -25,22 +25,22 @@ const Login = ({onLogin}) => {
     <div id="container">
         
       
-    <form onSubmit={handleSubmit} id="login-form">     
+    <form onSubmit={handleSubmit} id="container">     
      <h2>Iniciar Sesión</h2>   
-     <input id="login-email"       
+     <input id="container_input"       
         type="email"    
         placeholder="Correo electronico"    
         onChange={(e) => setEmail(e.target.value)}    
         required     
          />     
-     <input id="login-password"       
+     <input id="container_input"       
         type="password"    
         placeholder="Contraseña"     
         value={password}     
         onChange={(e) => setPassword(e.target.value)}     
         required    
            />     
-         <button id="login-button" type="submit">Inicia sesión</button>
+         <button id="container_button" type="submit">Inicia sesión</button>
          <p>      
             ¿Aún no eres miembro? <span onClick={() => 
             navigate("/signup")} style={{ cursor: 'pointer', color: 'blue'

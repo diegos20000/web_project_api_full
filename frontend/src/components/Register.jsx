@@ -27,22 +27,22 @@ const Register = ({onRegister}) => {
         <div id="container">
            
         
-        <form onSubmit={handleSubmit} id="register-form">    
+        <form onSubmit={handleSubmit} id="container">    
         <h2>Registro</h2>    
-         <input id="register-email"       
+         <input id="container_input"       
             type="email"        
             placeholder="Correo electrónico"       
             value={email}        
             onChange={(e) => setEmail(e.target.value)}     
             required      />     
-        <input id="register-password"        
+        <input id="container_input"        
             type="password"       
             placeholder="Contraseña"       
             value={password}       
             onChange={(e) => setPassword(e.target.value)}       
             required    
           />     
-         <button id="register-button" type="submit">Regístrate</button>
+         <button id="container_button" type="submit">Regístrate</button>
          <p>      
           ¿Ya eres miembro? <span onClick={() => 
           navigate("/login")} style={{ cursor: 'pointer', color: 'blue'

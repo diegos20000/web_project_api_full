@@ -1,5 +1,5 @@
 {
-  "name": "web_project_around_react",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,9 +7,12 @@
     "dev": "vite --open",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && scp -r ./dist/* dsuccess2020@xyzzz.chickenkiller.com:/home/dsuccess2020/web_project_api_full/frontend"
   },
   "dependencies": {
+    "celebrate": "^15.0.3",
+    "joi": "^17.13.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.29.0"
