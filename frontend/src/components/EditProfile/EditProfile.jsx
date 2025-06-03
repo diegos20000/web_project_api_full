@@ -6,6 +6,7 @@ export default function EditProfile({ onClose, isOpen, onUpdateUser }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [buttonText, setButtonText] = useState("guardar");
+  const [isFormValid, setIsFormValid] = useState(false);
   const currentUser = useContext(CurrentUserContext);
 
   function handleChangeName(e) {
@@ -14,6 +15,12 @@ export default function EditProfile({ onClose, isOpen, onUpdateUser }) {
 
   function handleChangeDescription(e) {
     setDescription(e.target.value);
+    validateForm(name, e.target.value);
+  }
+
+  function validateForm(nameValue, descriptionValue) {
+    const isValid = nameValue.trim() !== "" && descriptionValue.trim() !== "";
+    setIsFormValid(isValid);
   }
 
   function handleSubmit(event) {
@@ -32,6 +39,7 @@ export default function EditProfile({ onClose, isOpen, onUpdateUser }) {
     if (isOpen) {
       setName(currentUser.name || "");
       setDescription(currentUser.about || "");
+      setIsFormValid(!!currentUser.name && !!currentUser.about)
     }
   }, [isOpen, currentUser]);
 
@@ -43,6 +51,7 @@ export default function EditProfile({ onClose, isOpen, onUpdateUser }) {
       onClose={onClose}
       onSubmit={handleSubmit}
       buttonText={buttonText}
+      isDisabled={!isFormValid}
     >
       <fieldset className="popup__card">
         <input

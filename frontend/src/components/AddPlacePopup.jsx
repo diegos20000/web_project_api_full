@@ -4,7 +4,7 @@ import PopupWithForm from "./PopupWithForm";
 export default function AddPlacePopup({ isOpen, onClose, onAddPlaceSubmit }) {
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
-  const [buttonText, setbuttonText] = useState("Guardar");
+  const [buttonText, setButtonText] = useState("Guardar");
 
   function handleChangeTitle(e) {
     setTitle(e.target.value);
@@ -18,14 +18,20 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlaceSubmit }) {
     e.preventDefault();
 
     const defaultSubmitText = buttonText;
-    setbuttonText("Guardando...");
+    setButtonText("Guardando...");
+
+    if (link.trim() === "") {
+      alert("Por favor, introduce un enlace válido.");
+      setButtonText(defaultSubmitText);
+      return;
+    }
 
     await onAddPlaceSubmit({
       name: title,
       link,
     });
 
-    setbuttonText(defaultSubmitText);
+    setButtonText(defaultSubmitText);
   }
 
   useEffect(() => {

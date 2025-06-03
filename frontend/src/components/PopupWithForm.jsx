@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import closeButton from "../images/Close Icon.jpg";
 import FormValidator from "./FormValidator";
 
@@ -13,11 +13,23 @@ export default function PopupWithForm(props) {
   };
 
   const formRef = React.useRef();
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  //React.useEffect(() => {
-  // const formValidator = new FormValidator(settings, formRef.current);
-  // formValidator.enableValidation();
-  // }, [formRef]);
+  useEffect(() => {
+    const formValidator = new FormValidator(settings, formRef.current);
+    formValidator.enableValidation();
+
+    const updateFormValidity = () => {
+      const isValid = formValidator.isFormValid();
+      setIsFormValid(isValid);
+    };
+
+    formRef.current.addEventListener("input", updateFormValidity);
+
+    return () => {
+      formRef.current.removeEventListener("input", updateFormValidity);
+    };
+  }, [settings]);
 
   const handleClickOut = (evt) => {
     if (evt.target.classList.contains("pop-up")) {
@@ -40,13 +52,21 @@ export default function PopupWithForm(props) {
                 noValidate
                 id="form-profile"
                 ref={formRef}
-                onSubmit={props.onSubmit}
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (isFormValid) {
+                    props.onSubmit(event);
+                  }
+                }}
             >
               <h3 className="popup__title">{props.title}</h3>
               {props.children}
               <button
-                  className="popup__submit-btn popup__submit-btn_action_add pop-up__save-button"
+                  className={`popup__submit-btn popup__submit-btn_action_add pop-up__save-button ${
+                    isFormValid ? "" : settings.inactiveButtonClass
+                  }`} 
                   type="submit"
+                  disabled={!isFormValid}
               >
                 {props.buttonText}
               </button>
