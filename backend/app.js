@@ -93,7 +93,7 @@ app.use(errorHandler);
 
 
 // Configuración de puerto y escucha
-const { PORT = 5009 } = process.env;
+const { PORT = 5010 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {

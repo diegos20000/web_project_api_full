@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "./Header/Header.jsx";
 import Main from "./Main.jsx";
-import Card from "./Card/Card.jsx";
+import Card from "../components/Card/Card.jsx";
 import ConfirmDeletePopup from "./ConfirmDeletePopup.jsx";
 import ImagePopup from "./ImagePopup/ImagePopup.jsx";
 import EditProfile from "./EditProfile/EditProfile.jsx";
@@ -16,7 +16,8 @@ import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
-import auth from "../utils/auth.js"
+import auth from "../utils/auth.js";
+import api from "../utils/api.js";
 
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
@@ -32,9 +33,7 @@ function App() {
   //const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardToDelete, setCardToDelete] = useState(null);
-  const [currentUser, setCurrentUser] = useState({
-    
-  });
+  const [currentUser, setCurrentUser] = useState({});
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);  
   const [tooltipLogo, setTooltipLogo] = useState('');
@@ -43,26 +42,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const [cards, setCards] = useState([
-    {
-      isLiked: false,
-      _id: "5d1f0611d321eb4bdcd707dd",
-      name: "Yosemite Valley",
-      link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-      owner: "5d1f0611d321eb4bdcd707dd",
-      createdAt: "2019-07-05T08:10:57.741Z",
-      likes: [],
-    },
-    {
-      isLiked: false,
-      _id: "5d1f064ed321eb4bdcd707de",
-      name: "Lake Louise",
-      link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-      owner: "5d1f0611d321eb4bdcd707dd",
-      createdAt: "2019-07-05T08:11:58.324Z",
-      likes: [],
-    },
-  ]);
+  const [cards, setCards] = useState([]);
 
   
 
@@ -107,44 +87,60 @@ function App() {
   function handleCardLike(card) {
     const likes = card.likes || [];
     const isLiked = likes.some((i) => i._id === currentUser._id);
-    const updatedCards = cards.map((c) => {
-      if (c._id === card._id) {
-        return {
-          ...c,
-          likes: isLiked
-            ? likes.filter((i) => i._id !== currentUser._id)
-            : [...likes, currentUser],
-        };
-      }
-      return c;
+
+    api.changeLikeCardStatus(card._id, !isLiked)
+    .then((updatedCard) => {
+      const updatedCards = cards.map((c) => {
+      if (c._id === updatedCard._id) {
+        return updatedCard;
+    }
+    return c;
     });
     setCards(updatedCards);
+  })
+  .catch((error) => {
+    console.error("Error al cambiar el estado del like:", error);
+  });
   }
+
+
   async function handleCardDelete() {
+    console.log("Delete confirmation received for card:", cardToDelete);
+
     if (!cardToDelete) {
+      console.error("No card selected for deletion.");
       return;
     }
+
+    try {
+      console.log("Attempting to delete card:", cardToDelete._id);
+      await api.deleteCard(cardToDelete._id);
+
     setCards((prevCards) =>
-      prevCards.filter((card) => card._id !== cardToDelete._id)
-    );
-    setCardToDelete(null);
-    setIsDeletePopupOpen(false);
+      prevCards.filter((card) => card._id !== cardToDelete._id));
+      setCardToDelete(null);
+      setIsDeletePopupOpen(false);
+    } catch (error) {
+      console.error("Error deleting card:", error);
+    } 
+    
   }
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   }
 
-  function handleAddPlaceSubmit({ link, name }) {
-    const newCard = {
-      _id: Date.now().toString(),
-      link,
-      name,
-      isLiked: false,
-      likes: [],
-    };
+  async function handleAddPlaceSubmit({ link, name }) {
+    
+    try {
+    const newCard = await api.createCard(link, name);
+    console.log("Nueva tarjeta creada:", newCard);
     setCards((prevCards) => [newCard, ...prevCards]);
     closeAllPopups();
+  } catch (error) {
+    console.error("Error al crear la tarjeta:", error);
   }
+  }
+  
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -217,7 +213,7 @@ function App() {
   
 
   const handleSignup = async (email, password) => {
-    console.log("Auth instance:", auth);
+    
     try {
       const registeredEmails = JSON.parse
       (localStorage.getItem("registeredEmails")) || [];
@@ -251,7 +247,7 @@ function App() {
 
       if (user.token) {
         setToken(user.token);
-        console.log("Token almacenado:", getToken());
+        
       } else {
         throw new Error("No se recibió un token.");
       }
@@ -295,10 +291,11 @@ function App() {
                  onCardClick={setSelectedCard}                
                  onCardLike={handleCardLike}                 
                  onCardDelete={(card) => {                   
-                 setCardToDelete(card);                  
-                 setIsDeletePopupOpen(true);           
-                  }}              
-                      />             
+                  setCardToDelete(card);
+                  console.log("Card set for deletion:", card);                  
+                  setIsDeletePopupOpen(true);           
+                }}              
+                  />             
                                
                <EditProfile        
                   isOpen={isEditProfilePopupOpen}             
@@ -309,7 +306,8 @@ function App() {
                <ConfirmDeletePopup          
                   isOpen={isDeletePopupOpen}            
                   onClose={closeAllPopups}            
-                  onConfirmDelete={handleCardDelete}         
+                  onConfirmDelete={handleCardDelete}
+                  buttonText="Eliminar"         
                    />               
                    
                <AddPlacePopup             

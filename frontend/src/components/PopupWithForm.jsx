@@ -12,7 +12,7 @@ export default function PopupWithForm(props) {
     errorClass: "popup__error_visible",
   };
 
-  const formRef = React.useRef();
+  const formRef = useRef();
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
@@ -24,10 +24,15 @@ export default function PopupWithForm(props) {
       setIsFormValid(isValid);
     };
 
-    formRef.current.addEventListener("input", updateFormValidity);
+    if (formRef.current) {
+      formRef.current.addEventListener("input", updateFormValidity);
+    }
 
     return () => {
-      formRef.current.removeEventListener("input", updateFormValidity);
+      if (formRef.current) {
+        formRef.current.removeEventListener("input", updateFormValidity);
+      }
+      
     };
   }, [settings]);
 
@@ -54,7 +59,7 @@ export default function PopupWithForm(props) {
                 ref={formRef}
                 onSubmit={(event) => {
                   event.preventDefault();
-                  if (isFormValid) {
+                  if (props.skipValidation || isFormValid) {
                     props.onSubmit(event);
                   }
                 }}
@@ -63,10 +68,10 @@ export default function PopupWithForm(props) {
               {props.children}
               <button
                   className={`popup__submit-btn popup__submit-btn_action_add pop-up__save-button ${
-                    isFormValid ? "" : settings.inactiveButtonClass
+                    !props.skipValidation && !isFormValid ? settings.inactiveButtonClass : ""
                   }`} 
                   type="submit"
-                  disabled={!isFormValid}
+                  disabled={!props.skipValidation && !isFormValid}
               >
                 {props.buttonText}
               </button>

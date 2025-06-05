@@ -30,19 +30,24 @@ const createCard = async (req, res) => {
 const deleteCard = async (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id;
+  console.log(req.user);
 
   try {
+    console.log(cardId);
+    console.log(userId);
     const card = await Card.findById(cardId);
+    console.log(card, "texto");
     if (!card) {
       return res.status(404).send({ message: "Tarjeta no encontrada" });
     }
     if (card.owner.toString() !== userId.toString()) {
       return res.status(403).send({message: "No tienes permiso para borrar esta tarjeta"});
     }
-    await card.remove();
+    await Card.deleteOne({ _id: cardId });
     res.status(200).send({ message: "Tarjeta eliminada" });
   } catch (error) {
-    res.status(500).send({ message: "Error al eliminar la tarjeta" });
+    console.error("Error al eliminar la tarjeta:", error);
+    res.status(500).send({ message: "Error al eliminar la tarjeta", error: error.message });
   }
 };
 

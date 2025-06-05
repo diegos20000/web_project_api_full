@@ -106,7 +106,7 @@ class Api {
 
     async changeLikeCardStatus(cardId, isLiked) {
         try {
-            const res = await fetch(`${this.BASE_URL}/cards/likes/${cardId}`, {
+            const res = await fetch(`${this.BASE_URL}/cards/${cardId}/likes`, {
                 method: isLiked ? "DELETE" : "PUT",
                 headers: this.headers(),
             });
@@ -138,8 +138,8 @@ class Api {
 }
 }
 
-const apiInstance = new Api({
-        BASE_URL: "https://api.xyzzz.chickenkiller.com",
+const api = new Api({
+        BASE_URL: "https://api.www.xyzzz.chickenkiller.com",
     });
 
-export default apiInstance;
+export default api;

@@ -6,17 +6,25 @@ export default function ConfirmDeletePopup({
   onClose,
   onConfirmDelete,
 }) {
-  const [buttonText, setbuttonText] = useState("Eliminar");
+  const [buttonText, setButtonText] = useState("Eliminar");
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    console.log("Delete button clicked");
 
-    const defaultSubmitText = buttonText;
-    setbuttonText("Eliminando...");
+    setIsLoading(true);
+    setButtonText("Eliminando...");
 
-    Promise.resolve(onConfirmDelete()).finally(() => {
-      setbuttonText(defaultSubmitText);
-    });
+    try {
+      await onConfirmDelete();
+      onClose();
+    } catch (error) {
+      console.error("Error deleting card:", error);
+    } finally {
+      setIsLoading(false);
+      setButtonText("Eliminar");
+    }
   }
 
   return (
@@ -26,7 +34,8 @@ export default function ConfirmDeletePopup({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      buttonText={buttonText}
+      buttonText={isLoading ? "Eliminando..." : buttonText}
+      skipValidation={true}
     ></PopupWithForm>
   );
 }

@@ -14,6 +14,7 @@ export default function Card(props) {
   const { name, link, _id, likes = [] } = card;
 
   const isLiked = likes.some((i) => i._id === currentUser._id);
+   
 
   const CardLikeButtonClassName = `element__button-like ${
     isLiked ? "element__button-like_active" : ""
@@ -25,11 +26,13 @@ export default function Card(props) {
     onCardClick(card);
   }
 
-  function handleLikeClick() {
-    onCardLike(card);
+  async function handleLikeClick() {
+    await onCardLike(card);
+    
   }
 
   function handleCardDelete() {
+    console.log("Delete button clicked for card:", card);
     if (onCardDelete && typeof onCardDelete === "function") {
       onCardDelete(card);
     } else {
@@ -39,6 +42,7 @@ export default function Card(props) {
 
   return (
     <div className="card" key={_id}>
+      
       <button
         type="button"
         className={cardDeleteButtonClassName}
@@ -50,6 +54,7 @@ export default function Card(props) {
           className="element__button-trash-img"
         />
       </button>
+      
       <img
         src={link}
         className="element__img"

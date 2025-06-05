@@ -14,7 +14,7 @@ async _request(endpoint, method = "GET", body = null) {
 
 if (token) {
   headers["Authorization"] = `Bearer ${token}`;
-  console.log("Token utilizado:", token);
+  
 }else {       
   console.error("Token no proporcionado.");   
  }
@@ -81,7 +81,7 @@ async getUserInfo() {
 }
 
 const auth = new Auth({
-  BASE_URL: "https://api.xyzzz.chickenkiller.com",
+  BASE_URL: "https://api.www.xyzzz.chickenkiller.com",
 });
 
 export default auth;
