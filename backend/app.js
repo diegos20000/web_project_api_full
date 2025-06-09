@@ -21,6 +21,7 @@ app.use(express.json());
    'http://tripleten.tk',
    'http://localhost:3000',
    'https://www.xyzzz.chickenkiller.com',
+   'https://www.api.xyzzz.chickenkiller.com',
    'https://xyzzz.chickenkiller.com']; 
 
  app.use((req, res, next) => {
