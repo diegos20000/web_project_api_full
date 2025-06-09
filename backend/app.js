@@ -35,7 +35,8 @@ app.options("*", cors());
   console.log(allowedCors,origin);
   if (allowedCors.includes(origin)) { 
     console.log("texto");
-    res.header('Access-Control-Allow-Origin', origin); 
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true'); 
    }
 
    if (method === 'OPTIONS') {
