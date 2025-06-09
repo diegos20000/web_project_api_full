@@ -46,7 +46,7 @@ app.use(express.json());
 
    next();
 }); 
-app.options('*', cors());
+
 
 
 // Configuración para servir archivos estáticos
