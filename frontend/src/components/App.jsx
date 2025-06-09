@@ -22,7 +22,7 @@ import api from "../utils/api.js";
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
 
-const BASE_URL = "http://localhost:5002";
+const BASE_URL = "https://xyzzz.chickenkiller.com";
 
 
 function App() {

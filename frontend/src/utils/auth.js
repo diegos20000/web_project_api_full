@@ -81,7 +81,7 @@ async getUserInfo() {
 }
 
 const auth = new Auth({
-  BASE_URL: "http://localhost:5002",
+  BASE_URL: "https://api.xyzzz.chickenkiller.com",
 });
 
 export default auth;
