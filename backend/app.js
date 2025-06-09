@@ -16,14 +16,14 @@ const app = express();
 app.use(express.json());
 
 // Configuración de CORS
-const allowedCors = [ 
+ const allowedCors = [ 
    'https://tripleten.tk',
    'http://tripleten.tk',
    'http://localhost:3000',
    'https://www.xyzzz.chickenkiller.com',
-   'https://xyzzz.chickenkiller.com'];
+   'https://xyzzz.chickenkiller.com']; 
 
-/* app.use((req, res, next) => {
+ app.use((req, res, next) => {
   const {origin} = req.headers;
   const {method} = req;
 
@@ -44,9 +44,9 @@ const allowedCors = [
    }
 
    next();
-}); */
+}); 
 app.options('*', cors());
-app.use(cors({origin:true, credentials:true}));
+
 
 // Configuración para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
@@ -93,7 +93,7 @@ app.use(errorHandler);
 
 
 // Configuración de puerto y escucha
-const { PORT = 5001 } = process.env;
+const { PORT = 5002 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
