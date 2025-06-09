@@ -11,6 +11,7 @@ class Api {
         return {
             'Authorization': `Bearer ${getToken()}`,
             'Content-Type': 'application/json',
+        
         };
     }
 
@@ -107,7 +108,7 @@ class Api {
     async changeLikeCardStatus(cardId, isLiked) {
         try {
             const res = await fetch(`${this.BASE_URL}/cards/${cardId}/likes`, {
-                method: isLiked ? "DELETE" : "PUT",
+                method: isLiked ? "PUT" : "DELETE",
                 headers: this.headers(),
             });
             if (!res.ok) {
@@ -139,7 +140,7 @@ class Api {
 }
 
 const api = new Api({
-        BASE_URL: "https://api.xyzzz.chickenkiller.com",
+        BASE_URL: "http://localhost:5002",
     });
 
 export default api;

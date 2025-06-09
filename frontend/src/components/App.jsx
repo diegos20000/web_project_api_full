@@ -22,7 +22,7 @@ import api from "../utils/api.js";
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
 
-const BASE_URL = "https://xyzzz.chickenkiller.com";
+const BASE_URL = "http://localhost:5002";
 
 
 function App() {
@@ -85,8 +85,8 @@ function App() {
   }
 
   function handleCardLike(card) {
-    const likes = card.likes || [];
-    const isLiked = likes.some((i) => i._id === currentUser._id);
+    const likes = Array.isArray(card.likes) ? card.likes : [];
+    const isLiked = likes.some((i) => i.toString() === currentUser._id);
 
     api.changeLikeCardStatus(card._id, !isLiked)
     .then((updatedCard) => {

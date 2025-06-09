@@ -15,12 +15,15 @@ const path = require("path");
 const app = express();
 app.use(express.json());
 
+app.options("*", cors());
+
 // Configuración de CORS
  const allowedCors = [ 
    'https://tripleten.tk',
    'http://tripleten.tk',
    'http://localhost:3000',
    'https://www.xyzzz.chickenkiller.com',
+   'https://www.xyzzz.chickenkiller.com/',
    'https://www.api.xyzzz.chickenkiller.com',
    'https://xyzzz.chickenkiller.com']; 
 
@@ -29,8 +32,9 @@ app.use(express.json());
   const {method} = req;
 
   const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE"; 
-
+  console.log(allowedCors,origin);
   if (allowedCors.includes(origin)) { 
+    console.log("texto");
     res.header('Access-Control-Allow-Origin', origin); 
    }
 

@@ -7,13 +7,15 @@ export default function Card(props) {
   const { card, onCardClick, onCardLike, onCardDelete } = props;
   const currentUser = useContext(CurrentUserContext);
 
+  
+
   if (!card) {
     return null;
   }
 
   const { name, link, _id, likes = [] } = card;
 
-  const isLiked = likes.some((i) => i._id === currentUser._id);
+  const isLiked = Array.isArray(likes) && likes.some((i) => i.toString() === currentUser._id);
    
 
   const CardLikeButtonClassName = `element__button-like ${
