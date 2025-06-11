@@ -2,7 +2,7 @@ const Card = require("../models/card");
 
 const getAllCards = async (req, res) => {
   try {
-    const cards = await Card.find().populate("owner");
+    const cards = await Card.find({}).populate("owner");
     res.status(200).send(cards);
   } catch (error) {
     res.status(500).send({ message: "Error al obtener tarjetas", error });
