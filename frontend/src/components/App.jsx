@@ -22,7 +22,7 @@ import api from "../utils/api.js";
 import checkImage from "../images/check.png";
 import errorImage from "../images/x.png";
 
-const BASE_URL = "https://xyzzz.chickenkiller.com";
+const BASE_URL = "https://api.xyzzz.chickenkiller.com";
 
 
 function App() {
@@ -55,6 +55,7 @@ function App() {
           setIsLoggedIn(true);
           setCurrentUser(userInfo);
           navigate("/");
+          api.getInitialCards().then(cards => setCards(cards));
         })
         .catch(() => {
           localStorage.removeItem("authToken");
@@ -229,7 +230,7 @@ function App() {
       setTooltipMessage("¡Correcto! Ya estás registrado.");
       setTooltipLogo(checkImage);
       setInfoTooltipOpen(true);
-      setIsLoggedIn(true);
+      setIsLoggedIn(true);      
     } catch (error) {
       setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
@@ -255,6 +256,7 @@ function App() {
       setCurrentUser(userInfo);
       setIsLoggedIn(true);
       navigate("/");
+      api.getInitialCards().then(cards => setCards(cards));
     } catch (error) {
       setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
       setTooltipLogo(errorImage);
