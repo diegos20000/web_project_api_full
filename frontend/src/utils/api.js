@@ -140,7 +140,7 @@ class Api {
 }
 
 const api = new Api({
-        BASE_URL: "https://api.xyzzz.chickenkiller.com",
+        BASE_URL: "http://localhost:5000",
     });
 
 export default api;

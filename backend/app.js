@@ -15,42 +15,30 @@ const path = require("path");
 const app = express();
 app.use(express.json());
 
-app.options("*", cors());
 
-// Configuración de CORS
- const allowedCors = [ 
-   'https://tripleten.tk',
-   'http://tripleten.tk',
-   'http://localhost:3000',
-   'https://www.xyzzz.chickenkiller.com',
-   'https://www.xyzzz.chickenkiller.com/',
-   'https://www.api.xyzzz.chickenkiller.com',
-   'https://xyzzz.chickenkiller.com']; 
 
- app.use((req, res, next) => {
-  const {origin} = req.headers;
-  const {method} = req;
+//Configuración de CORS
+const allowedCors = [ 
+  'https://tripleten.tk',
+  'http://tripleten.tk',
+  'http://localhost:3000',
+  'https://www.xyzzz.chickenkiller.com',
+  'https://www.xyzzz.chickenkiller.com/',
+  'https://www.api.xyzzz.chickenkiller.com',
+  'https://xyzzz.chickenkiller.com']; 
 
-  const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE"; 
-  console.log(allowedCors,origin);
-  if (allowedCors.includes(origin)) { 
-    console.log("texto");
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true'); 
-   }
-
-   if (method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-
-    const requestHeaders = req.headers['access-control-request-headers'];
-    if (requestHeaders) {
-      res.header('Access-Control-Allow-Headers', requestHeaders);
+ app.use(cors({
+  origin: (origin, callback) => {
+    if (allowedCors.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS no permitido'));
     }
-    return res.sendStatus(204);
-   }
-
-   next();
-}); 
+  },
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
+ })); 
 
 
 
@@ -99,7 +87,7 @@ app.use(errorHandler);
 
 
 // Configuración de puerto y escucha
-const { PORT = 5002 } = process.env;
+const { PORT = 5000 } = process.env;
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {

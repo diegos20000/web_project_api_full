@@ -7,7 +7,11 @@ class Auth {
 
 
 async _request(endpoint, method = "GET", body = null) {
+  
   const token = getToken();
+  
+   
+  
   const headers = {
     "Content-Type": "application/json",
   };
@@ -81,7 +85,7 @@ async getUserInfo() {
 }
 
 const auth = new Auth({
-  BASE_URL: "https://api.xyzzz.chickenkiller.com",
+  BASE_URL: "http://localhost:5000",
 });
 
 export default auth;

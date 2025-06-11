@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
 
   avatar: {
     type: String,
-    default: 'http://localhost:5001/images/avatarpic.jpeg',
+    default: 'http://localhost:5000/images/avatarpic.jpeg',
     validate: {
       validator: avatarValidator,
       message: (props) => `${props.value} no es un enlace válido para el avatar!`,

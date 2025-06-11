@@ -29,7 +29,10 @@ export default function Card(props) {
   }
 
   async function handleLikeClick() {
+    console.log("Like button clicked for card:", card);
+    console.log("Current User ID:", currentUser._id);
     await onCardLike(card);
+    console.log("After like, card:", card);
     
   }
 
