@@ -47,9 +47,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Conectar a MongoDB
 mongoose
-  .connect("mongodb://127.0.0.1:27017/mydb", {})
-  .then(() => console.log("Conexión a MongoDB exitosa"))
-  .catch((err) => console.error("Error de conexión a MongoDB:", err));
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
 // Logging middleware
 app.use(requestLogger);
